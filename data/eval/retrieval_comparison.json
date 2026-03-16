@@ -1,0 +1,22 @@
+{
+  "vector_only": {
+    "avg_mrr": 0.7273,
+    "avg_precision_at_k": 0.7273,
+    "num_questions": 22
+  },
+  "bm25_only": {
+    "avg_mrr": 0.1997,
+    "avg_precision_at_k": 0.0955,
+    "num_questions": 22
+  },
+  "hybrid": {
+    "avg_mrr": 0.3689,
+    "avg_precision_at_k": 0.4389,
+    "num_questions": 22
+  },
+  "hybrid_rerank": {
+    "avg_mrr": 0.5947,
+    "avg_precision_at_k": 0.5455,
+    "num_questions": 22
+  }
+}

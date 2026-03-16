@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+.conda/
+
+# Environment variables
+.env
+
+# Data — large files, generated at runtime
+data/raw/
+data/processed/
+data/chroma_db/
+data/bm25_index.pkl
+data/download.log
+data/download_log.json
+data/eval/eval_results.json
+
+# Keep the directory structure
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/chroma_db/.gitkeep
+!data/eval/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+
+# Pytest
+.pytest_cache/
+htmlcov/
+.coverage
+
+internal

@@ -1,0 +1,178 @@
+[
+  {
+    "question": "What was Apple's total net revenue for fiscal year 2023?",
+    "reference_answer": "Apple's total net revenue for fiscal year 2023 was $383.3 billion (or approximately $383,285 million), representing a slight decline from $394.3 billion in fiscal 2022.",
+    "ticker": "AAPL",
+    "year": "2023",
+    "question_type": "factual_numerical",
+    "difficulty": "easy"
+  },
+  {
+    "question": "What was Microsoft's total revenue in fiscal year 2023?",
+    "reference_answer": "Microsoft's total revenue for fiscal year 2023 was $211.9 billion, an increase of approximately 7% from $198.3 billion in fiscal 2022, driven primarily by growth in the Intelligent Cloud segment.",
+    "ticker": "MSFT",
+    "year": "2023",
+    "question_type": "factual_numerical",
+    "difficulty": "easy"
+  },
+  {
+    "question": "What was NVIDIA's net income for fiscal year 2023?",
+    "reference_answer": "NVIDIA's net income for fiscal year 2023 was approximately $4.37 billion, a significant decrease compared to fiscal year 2022 due to the data center and gaming market slowdown.",
+    "ticker": "NVDA",
+    "year": "2023",
+    "question_type": "factual_numerical",
+    "difficulty": "easy"
+  },
+  {
+    "question": "What was Amazon's net sales in 2022?",
+    "reference_answer": "Amazon's net sales in 2022 were $513.98 billion, an increase of approximately 9% from $469.82 billion in 2021.",
+    "ticker": "AMZN",
+    "year": "2022",
+    "question_type": "factual_numerical",
+    "difficulty": "easy"
+  },
+  {
+    "question": "What were Alphabet's total revenues for fiscal year 2023?",
+    "reference_answer": "Alphabet's total revenues for fiscal year 2023 were approximately $307.4 billion, representing a growth of approximately 8.7% compared to $282.8 billion in 2022, driven by Google Search, YouTube Ads, and Google Cloud.",
+    "ticker": "GOOGL",
+    "year": "2023",
+    "question_type": "factual_numerical",
+    "difficulty": "easy"
+  },
+  {
+    "question": "Compare Apple and Microsoft's R&D spending in fiscal year 2023. Which company invested more as a percentage of revenue?",
+    "reference_answer": "In fiscal year 2023, Microsoft spent approximately $27.2 billion on R&D (about 12.8% of revenue), while Apple spent approximately $29.9 billion (about 7.8% of revenue). Although Apple spent more in absolute terms, Microsoft invested significantly more as a percentage of revenue, reflecting its greater focus on software and cloud innovation.",
+    "ticker": null,
+    "year": "2023",
+    "question_type": "comparison",
+    "difficulty": "medium"
+  },
+  {
+    "question": "How did Amazon's operating income change from 2022 to 2023? What drove the improvement?",
+    "reference_answer": "Amazon's operating income improved significantly from a loss of approximately $2.5 billion in 2022 to a profit of approximately $36.9 billion in 2023. The improvement was primarily driven by cost reduction initiatives, improved efficiency in fulfillment operations, and the continued strong performance of Amazon Web Services (AWS).",
+    "ticker": "AMZN",
+    "year": "2023",
+    "question_type": "comparison",
+    "difficulty": "medium"
+  },
+  {
+    "question": "Compare NVIDIA's revenue growth rate in 2023 versus Alphabet's revenue growth rate in the same year.",
+    "reference_answer": "NVIDIA experienced dramatic revenue growth in fiscal 2024 (calendar 2023) of approximately 122% year-over-year driven by AI/data center demand, while Alphabet grew revenue approximately 8.7% in 2023. NVIDIA's growth far outpaced Alphabet's due to the AI infrastructure buildout.",
+    "ticker": null,
+    "year": "2023",
+    "question_type": "comparison",
+    "difficulty": "medium"
+  },
+  {
+    "question": "Which company had the highest operating margin in 2023: Apple, Microsoft, or Alphabet?",
+    "reference_answer": "Microsoft had the highest operating margin in fiscal 2023 at approximately 41.8%, followed by Alphabet at approximately 27.4%, and Apple at approximately 29.8%. Microsoft's high margin reflects the profitability of its cloud and software subscription businesses.",
+    "ticker": null,
+    "year": "2023",
+    "question_type": "comparison",
+    "difficulty": "hard"
+  },
+  {
+    "question": "Compare Apple and Amazon's total assets as of their respective fiscal year-end 2022 balance sheets.",
+    "reference_answer": "As of fiscal year-end 2022, Apple reported total assets of approximately $352.8 billion while Amazon reported total assets of approximately $462.7 billion. Amazon had larger total assets primarily due to its extensive fulfillment network, AWS infrastructure, and diverse business operations.",
+    "ticker": null,
+    "year": "2022",
+    "question_type": "comparison",
+    "difficulty": "hard"
+  },
+  {
+    "question": "What are the primary risk factors that Apple identifies related to its supply chain?",
+    "reference_answer": "Apple identifies several key supply chain risks including: heavy reliance on sole-source suppliers for critical components, concentration of manufacturing in China and Asia creating geopolitical risk, potential disruptions from natural disasters or epidemics, long lead times for components, and vulnerability to component shortages that could affect production volumes and product launches.",
+    "ticker": "AAPL",
+    "year": "2023",
+    "question_type": "qualitative",
+    "difficulty": "medium"
+  },
+  {
+    "question": "How does Microsoft describe its strategy for artificial intelligence and cloud computing in its 2023 10-K?",
+    "reference_answer": "Microsoft describes its AI strategy as centering on embedding AI capabilities across all its products through Azure OpenAI Service and Copilot integrations. The strategy focuses on: making Azure the preferred cloud for AI workloads, integrating generative AI into Microsoft 365, Dynamics, and GitHub Copilot, and democratizing AI access through responsible AI principles while capitalizing on its investment in OpenAI.",
+    "ticker": "MSFT",
+    "year": "2023",
+    "question_type": "qualitative",
+    "difficulty": "medium"
+  },
+  {
+    "question": "What competitive risks does Alphabet highlight in its 2023 10-K regarding the search advertising market?",
+    "reference_answer": "Alphabet highlights risks including: intensifying competition from Microsoft Bing powered by ChatGPT/GPT-4, potential disruption of traditional search from generative AI, competition from Amazon in product search, the rise of social media platforms as discovery engines, regulatory scrutiny of its market position, and the challenge of maintaining search quality while integrating AI features without degrading user trust.",
+    "ticker": "GOOGL",
+    "year": "2023",
+    "question_type": "qualitative",
+    "difficulty": "hard"
+  },
+  {
+    "question": "What does Amazon say about its investment priorities and long-term business philosophy in its 2023 annual report?",
+    "reference_answer": "Amazon emphasizes its long-term customer-centric approach and willingness to invest heavily even at the expense of short-term profitability. Key investment priorities include AWS infrastructure expansion, fulfillment network optimization, generative AI services, Project Kuiper satellite broadband, healthcare through Amazon Clinic, and international expansion. The company prioritizes free cash flow generation over reported earnings.",
+    "ticker": "AMZN",
+    "year": "2023",
+    "question_type": "qualitative",
+    "difficulty": "medium"
+  },
+  {
+    "question": "What are the key segments of NVIDIA's business and their relative revenue contributions in fiscal year 2023?",
+    "reference_answer": "NVIDIA's business in fiscal 2023 comprised two reportable segments: Graphics (including GeForce gaming GPUs, professional visualization, and automotive) and Compute & Networking (including data center, AI, and networking). The Data Center segment was the largest contributor, though gaming revenue declined significantly due to inventory corrections.",
+    "ticker": "NVDA",
+    "year": "2023",
+    "question_type": "qualitative",
+    "difficulty": "medium"
+  },
+  {
+    "question": "Extract Apple's consolidated statement of operations data for fiscal year 2023: net sales, gross margin, operating expenses, and net income.",
+    "reference_answer": "From Apple's FY2023 consolidated statement of operations: Net sales $383,285M; Cost of sales $214,137M; Gross margin $169,148M (44.1%); Total operating expenses $54,847M (R&D $29,915M, SG&A $24,932M); Operating income $114,301M; Net income $96,995M; Diluted EPS $6.13.",
+    "ticker": "AAPL",
+    "year": "2023",
+    "question_type": "table_extraction",
+    "difficulty": "medium"
+  },
+  {
+    "question": "What does Microsoft's geographic revenue breakdown look like for fiscal year 2023? How much revenue came from the United States vs international markets?",
+    "reference_answer": "Microsoft's FY2023 geographic revenue: United States contributed approximately $105.5 billion (about 50% of total), with international markets contributing approximately $106.4 billion (50%). Key international markets include Europe, Middle East, and Africa, and Asia Pacific.",
+    "ticker": "MSFT",
+    "year": "2023",
+    "question_type": "table_extraction",
+    "difficulty": "medium"
+  },
+  {
+    "question": "Extract the key balance sheet metrics from Amazon's 2023 10-K: total assets, total liabilities, and stockholders' equity.",
+    "reference_answer": "From Amazon's FY2023 balance sheet: Total assets approximately $527.9 billion; Total liabilities approximately $369.8 billion; Total stockholders' equity approximately $146.0 billion. Key asset components include cash and equivalents, property and equipment (net), and operating lease right-of-use assets.",
+    "ticker": "AMZN",
+    "year": "2023",
+    "question_type": "table_extraction",
+    "difficulty": "medium"
+  },
+  {
+    "question": "What are NVIDIA's capital expenditures and research and development expenses for fiscal years 2022 and 2023?",
+    "reference_answer": "NVIDIA's R&D expenses in FY2023 were approximately $7.34 billion (vs $5.27 billion in FY2022), reflecting a 39% increase driven by investments in AI, data center GPU architecture, and next-generation products. Capital expenditures were approximately $976 million in FY2023 vs $976 million in FY2022.",
+    "ticker": "NVDA",
+    "year": "2023",
+    "question_type": "table_extraction",
+    "difficulty": "hard"
+  },
+  {
+    "question": "Considering both Apple's declining revenue in 2023 and NVIDIA's revenue surge driven by AI demand in the same period, what does this suggest about the broader technology sector's transition toward AI infrastructure, and how might this affect Apple's services revenue growth trajectory?",
+    "reference_answer": "The contrast between Apple's modest revenue decline (hardware saturation in consumer electronics) and NVIDIA's explosive AI-driven growth highlights a sector-wide reallocation of capital toward AI infrastructure. For Apple, this suggests an imperative to accelerate services revenue (App Store, Apple Intelligence, iCloud) which grew to approximately $85 billion in 2023 (22% of revenue), and to develop its own AI silicon strategy. The transition suggests enterprises and hyperscalers are prioritizing AI compute spend over consumer device refresh cycles, which creates both risk (slowing iPhone upgrades) and opportunity (Apple Intelligence as a differentiated software moat) for Apple going forward.",
+    "ticker": null,
+    "year": "2023",
+    "question_type": "multi_hop",
+    "difficulty": "hard"
+  },
+  {
+    "question": "How do Microsoft's and Alphabet's capital allocation strategies differ between 2022 and 2023, particularly regarding share buybacks, dividends, and capital expenditures, and what does this reveal about each company's view of their future growth opportunities?",
+    "reference_answer": "Microsoft in 2022-2023 spent approximately $22-28 billion on share buybacks and $19-20 billion on dividends annually, while dramatically increasing capex to $28 billion in FY2023 for cloud/AI infrastructure. Alphabet spent approximately $59 billion on buybacks in 2022 (more aggressive), with capex of approximately $32 billion in 2023. Microsoft's balanced approach (buybacks + dividends + heavy capex) suggests confidence in sustained cash flows while investing in cloud/AI. Alphabet's heavier buyback program with controlled capex growth suggests monetization optimization, though this changed in late 2023 with accelerated AI infrastructure spend. Both signal high conviction in AI as the next growth driver.",
+    "ticker": null,
+    "year": "2023",
+    "question_type": "multi_hop",
+    "difficulty": "hard"
+  },
+  {
+    "question": "Based on Amazon's 2022 losses and 2023 recovery, combined with AWS growth trajectory, how does Amazon's profitability profile compare to what it was in 2019, and what structural changes enabled the 2023 turnaround?",
+    "reference_answer": "Amazon's 2023 turnaround—from a $2.7B operating loss in 2022 to $36.9B operating income in 2023—was structurally different from 2019's profitability ($14.5B operating income) in that AWS now contributes a much larger share. Key structural enablers include: (1) AWS re-acceleration to 13% growth with 29.6% operating margin, (2) advertising services growing 26% to $46.9B, (3) fulfillment network efficiency gains from regionalization, and (4) headcount reduction of 27,000. The 2023 profitability is more durable than 2019 because it's driven by high-margin businesses rather than cyclical retail volume.",
+    "ticker": "AMZN",
+    "year": "2023",
+    "question_type": "multi_hop",
+    "difficulty": "hard"
+  }
+]
