@@ -15,6 +15,8 @@ from loguru import logger
 _EVAL_QUESTIONS_PATH = Path("data/eval/eval_questions.json")
 _EVAL_RESULTS_PATH = Path("data/eval/eval_results.json")
 _RETRIEVAL_COMPARISON_PATH = Path("data/eval/retrieval_comparison.json")
+_AGENTIC_QUESTIONS_PATH = Path("data/eval/agentic_questions.json")
+_AGENTIC_COMPARISON_PATH = Path("data/eval/agentic_comparison.json")
 
 
 class RAGEvaluator:
@@ -395,6 +397,216 @@ class RAGEvaluator:
         logger.success(f"Retrieval comparison saved to {_RETRIEVAL_COMPARISON_PATH}")
 
         return results
+
+    # ------------------------------------------------------------------
+    # v1 vs v2 comparison
+    # ------------------------------------------------------------------
+
+    def load_agentic_questions(self) -> list[dict]:
+        """Load the v2 question set (multi-hop numeric + relationship)."""
+        path = Path(_AGENTIC_QUESTIONS_PATH)
+        if not path.exists():
+            logger.error(
+                f"Agentic questions not found: {path} — run "
+                f"python scripts/build_agentic_eval.py"
+            )
+            return []
+
+        with open(path, "r", encoding="utf-8") as f:
+            questions: list[dict] = json.load(f)
+
+        logger.info(f"Loaded {len(questions)} agentic eval questions")
+        return questions
+
+    def compare_v1_v2(self, supervisor: Any, pipeline: Any = None) -> dict:
+        """
+        Run the agentic question set through both systems and score them.
+
+        Parameters
+        ----------
+        supervisor : SupervisorAgent
+        pipeline : SECRAGPipeline, optional
+            Defaults to the pipeline this evaluator was constructed with.
+
+        Returns
+        -------
+        dict  – per-system aggregates plus a per-question breakdown.
+        """
+        questions = self.load_agentic_questions()
+        if not questions:
+            return {}
+
+        pipeline = pipeline or self._pipeline
+        systems: dict[str, Any] = {"v1_rag": pipeline, "v2_agentic": supervisor}
+        per_question: list[dict] = []
+        scores: dict[str, dict[str, list]] = {
+            name: {"keyword": [], "numerical": [], "latency": [], "cited": []}
+            for name in systems
+        }
+        routing_correct = 0
+        routing_total = 0
+        verification_verdicts: dict[str, int] = {}
+
+        logger.info(f"Running v1 vs v2 comparison over {len(questions)} questions...")
+
+        for i, q in enumerate(questions, start=1):
+            question = q["question"]
+            reference = q.get("reference_answer", "")
+            ticker = q.get("ticker")
+            year = q.get("year")
+
+            logger.info(f"[{i}/{len(questions)}] {question[:70]}")
+            row: dict = {
+                "question_id": i,
+                "question": question,
+                "question_type": q.get("question_type"),
+                "difficulty": q.get("difficulty"),
+                "reference_answer": reference,
+            }
+
+            for name, system in systems.items():
+                start = time.perf_counter()
+                try:
+                    if name == "v1_rag":
+                        result = system.ask(
+                            question=question,
+                            ticker_filter=ticker,
+                            year_filter=year,
+                        )
+                    else:
+                        result = system.ask(question=question)
+                except Exception as exc:  # noqa: BLE001
+                    logger.error(f"{name} failed on Q{i}: {exc}")
+                    result = {"answer": f"[ERROR: {exc}]", "sources": []}
+
+                elapsed_ms = (time.perf_counter() - start) * 1000
+                generated = result.get("answer", "")
+
+                kw = self.compute_keyword_overlap(reference, generated)
+                num = self.compute_numerical_accuracy(reference, generated)
+
+                scores[name]["keyword"].append(kw)
+                scores[name]["numerical"].append(num)
+                scores[name]["latency"].append(elapsed_ms)
+                scores[name]["cited"].append(1 if result.get("sources") else 0)
+
+                row[name] = {
+                    "answer": generated,
+                    "keyword_overlap": kw,
+                    "numerical_accuracy": num,
+                    "latency_ms": round(elapsed_ms, 2),
+                    "num_sources": len(result.get("sources", [])),
+                }
+
+                if name == "v2_agentic":
+                    agents_used = result.get("agents_used", [])
+                    verification = result.get("verification", {})
+                    row[name]["agents_used"] = agents_used
+                    row[name]["verification"] = verification.get("verdict")
+                    row[name]["confidence"] = verification.get("confidence")
+
+                    verdict = verification.get("verdict", "none")
+                    verification_verdicts[verdict] = (
+                        verification_verdicts.get(verdict, 0) + 1
+                    )
+
+                    # Did the supervisor call the specialist the question needs?
+                    expected = set(q.get("expected_agents") or [])
+                    if expected:
+                        routing_total += 1
+                        if expected & set(agents_used):
+                            routing_correct += 1
+                            row[name]["routing_correct"] = True
+                        else:
+                            row[name]["routing_correct"] = False
+
+            per_question.append(row)
+
+        def mean(values: list) -> float:
+            return round(sum(values) / len(values), 4) if values else 0.0
+
+        summary = {
+            name: {
+                "avg_keyword_overlap": mean(s["keyword"]),
+                "avg_numerical_accuracy": mean(s["numerical"]),
+                "citation_rate": mean(s["cited"]),
+                "avg_latency_ms": round(mean(s["latency"]), 1),
+            }
+            for name, s in scores.items()
+        }
+
+        # Break numerical accuracy out by question type — the aggregate hides
+        # that the two systems fail in completely different places.
+        by_type: dict[str, dict[str, list[float]]] = {}
+        for row in per_question:
+            qtype = row.get("question_type", "unknown")
+            bucket = by_type.setdefault(qtype, {"v1_rag": [], "v2_agentic": []})
+            for name in systems:
+                bucket[name].append(row.get(name, {}).get("numerical_accuracy", 0.0))
+
+        report = {
+            "total_questions": len(questions),
+            "summary": summary,
+            "numerical_accuracy_by_type": {
+                qtype: {name: mean(values) for name, values in buckets.items()}
+                for qtype, buckets in by_type.items()
+            },
+            "routing_accuracy": (
+                round(routing_correct / routing_total, 4) if routing_total else None
+            ),
+            "routing_correct": routing_correct,
+            "routing_total": routing_total,
+            "verification_verdicts": verification_verdicts,
+            "per_question_results": per_question,
+        }
+
+        _AGENTIC_COMPARISON_PATH.parent.mkdir(parents=True, exist_ok=True)
+        with open(_AGENTIC_COMPARISON_PATH, "w", encoding="utf-8") as f:
+            json.dump(report, f, indent=2)
+        logger.success(f"v1/v2 comparison saved to {_AGENTIC_COMPARISON_PATH}")
+
+        self._print_comparison(report)
+        return report
+
+    @staticmethod
+    def _print_comparison(report: dict) -> None:
+        """Print the v1 vs v2 comparison table."""
+        print("\n" + "=" * 72)
+        print("  v1 (single-pass RAG)  vs  v2 (multi-agent)")
+        print("=" * 72)
+        print(f"  Questions: {report['total_questions']}")
+        print()
+        print(f"  {'Metric':<26} {'v1_rag':>14} {'v2_agentic':>14}")
+        print("  " + "-" * 56)
+
+        v1 = report["summary"].get("v1_rag", {})
+        v2 = report["summary"].get("v2_agentic", {})
+        for key, label in (
+            ("avg_numerical_accuracy", "Numerical accuracy"),
+            ("avg_keyword_overlap", "Keyword overlap"),
+            ("citation_rate", "Citation rate"),
+            ("avg_latency_ms", "Avg latency (ms)"),
+        ):
+            print(f"  {label:<26} {v1.get(key, 0):>14} {v2.get(key, 0):>14}")
+
+        print("\n  Numerical accuracy by question type:")
+        print(f"  {'Type':<26} {'v1_rag':>14} {'v2_agentic':>14}")
+        print("  " + "-" * 56)
+        for qtype, values in sorted(report["numerical_accuracy_by_type"].items()):
+            print(
+                f"  {qtype:<26} {values.get('v1_rag', 0):>14} "
+                f"{values.get('v2_agentic', 0):>14}"
+            )
+
+        if report.get("routing_accuracy") is not None:
+            print(
+                f"\n  Supervisor routing accuracy : "
+                f"{report['routing_accuracy']:.2%} "
+                f"({report['routing_correct']}/{report['routing_total']})"
+            )
+        if report.get("verification_verdicts"):
+            print(f"  Verification verdicts       : {report['verification_verdicts']}")
+        print("=" * 72 + "\n")
 
     # ------------------------------------------------------------------
     # Private helpers

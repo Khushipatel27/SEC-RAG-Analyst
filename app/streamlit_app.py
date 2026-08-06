@@ -1,6 +1,7 @@
 """
 SEC Financial RAG Analyst — Streamlit Dashboard
-Dark finance theme | 4 tabs: Setup & Status | Ask the Filings | Company Profiles | RAG Evaluation
+Dark finance theme | 5 tabs: Setup & Status | Ask the Filings | Agentic (v2) |
+Company Profiles | RAG Evaluation
 """
 from __future__ import annotations
 
@@ -502,9 +503,10 @@ if missing:
 # ─────────────────────────────────────────────────────────────────────────────
 # Tabs
 # ─────────────────────────────────────────────────────────────────────────────
-tab1, tab2, tab3, tab4 = st.tabs([
+tab1, tab2, tab5, tab3, tab4 = st.tabs([
     "🛠️  Setup & Status",
     "💬  Ask the Filings",
+    "🧠  Agentic (v2)",
     "🏢  Company Profiles",
     "📊  RAG Evaluation",
 ])
@@ -1342,3 +1344,262 @@ with tab4:
             c_right.plotly_chart(fig_comp, use_container_width=True)
     else:
         st.info("No comparison data yet. Click **▶ Run Retrieval Comparison** above.")
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TAB 5 — Agentic (v2)
+# ═══════════════════════════════════════════════════════════════════════════════
+with tab5:
+    st.markdown("### 🧠 Multi-Agent Analyst")
+    st.caption(
+        "A supervisor reads the question, decides which specialists it needs, "
+        "and verifies the answer is grounded before returning it. "
+        "The v1 pipeline is one of the four tools it can call."
+    )
+
+    agent_status = api_get("/agents/status") or {}
+    if not agent_status.get("available"):
+        st.warning(
+            "The agentic layer is not initialised. Start the API and make sure "
+            "the knowledge graph exists:\n\n"
+            "`python -m src.ingestion.graph_builder`",
+            icon="⚠️",
+        )
+    else:
+        agents = agent_status.get("agents", {})
+        cols = st.columns(4)
+        specs = [
+            ("XBRL", "xbrl", "Exact SEC-tagged figures"),
+            ("Calculation", "calculation", "Growth, ratios, comparisons"),
+            ("Graph", "graph", "Relationship traversal"),
+            ("Narrative", "narrative", "v1 hybrid retrieval"),
+        ]
+        for col, (label, key, desc) in zip(cols, specs):
+            info = agents.get(key, {})
+            ok = info.get("available", False)
+            pill = "pill-ok" if ok else "pill-err"
+            col.markdown(
+                f"""<div class="stat-card">
+                      <div class="label" style="font-size:0.9rem;color:#e6edf3;
+                           font-weight:600;">{label}</div>
+                      <div class="label">{desc}</div>
+                      <div style="margin-top:8px;">
+                        <span class="{pill}">{'ready' if ok else 'unavailable'}</span>
+                      </div>
+                    </div>""",
+                unsafe_allow_html=True,
+            )
+
+        graph_stats = agents.get("graph", {}).get("stats", {})
+        if graph_stats:
+            st.caption(
+                f"Knowledge graph: {graph_stats.get('num_nodes', 0)} nodes · "
+                f"{graph_stats.get('num_edges', 0)} edges · built from "
+                f"{graph_stats.get('chunks_scanned', 0):,} chunks across "
+                f"{graph_stats.get('documents', 0)} filings"
+            )
+
+        st.markdown("---")
+
+        # ── Example questions, one per routing path ─────────────────────────
+        st.markdown("**Try a question that exercises each specialist:**")
+        examples = [
+            ("💰 Exact figure", "What was Apple's revenue in 2023?"),
+            ("🧮 Cross-company math", "How much faster did NVIDIA's R&D grow vs Microsoft's?"),
+            ("🕸️ Relationship", "Which companies share supply chain risk exposure?"),
+            ("📖 Narrative", "What did Amazon say about their AI strategy?"),
+        ]
+        ex_cols = st.columns(4)
+        for col, (label, q) in zip(ex_cols, examples):
+            if col.button(label, key=f"agentic_ex_{label}", use_container_width=True):
+                st.session_state.agentic_prefill = q
+
+        question = st.text_input(
+            "Ask a question",
+            value=st.session_state.get("agentic_prefill", ""),
+            placeholder="e.g. What was NVIDIA's R&D as a percentage of revenue in FY2023?",
+            key="agentic_question",
+        )
+
+        if st.button("▶  Ask the agents", type="primary", key="agentic_run"):
+            if not question.strip():
+                st.warning("Enter a question first.")
+            else:
+                with st.spinner("Routing to specialists..."):
+                    result = api_post(
+                        "/ask/agentic",
+                        {"question": question, "include_agent_results": True},
+                        timeout=300,
+                    )
+
+                if result:
+                    verification = result.get("verification", {})
+                    verdict = verification.get("verdict", "unknown")
+                    verdict_style = {
+                        "grounded": ("pill-ok", "✓ Grounded"),
+                        "partially_grounded": ("pill-err", "◐ Partially grounded"),
+                        "unsupported": ("pill-err", "✗ Unsupported"),
+                    }.get(verdict, ("pill-err", verdict))
+
+                    m1, m2, m3 = st.columns(3)
+                    m1.markdown(
+                        f"**Agents used**<br>"
+                        f"{' → '.join(result.get('agents_used', [])) or 'none'}",
+                        unsafe_allow_html=True,
+                    )
+                    m2.markdown(
+                        f"**Verification**<br>"
+                        f'<span class="{verdict_style[0]}">{verdict_style[1]}</span> '
+                        f"({verification.get('confidence', 0):.0%} confidence)",
+                        unsafe_allow_html=True,
+                    )
+                    m3.markdown(
+                        f"**Latency**<br>{result.get('latency_ms', 0)/1000:.1f}s",
+                        unsafe_allow_html=True,
+                    )
+
+                    st.markdown(
+                        f'<div class="answer-box">{result.get("answer", "")}</div>',
+                        unsafe_allow_html=True,
+                    )
+
+                    # ── Why this route? ─────────────────────────────────────
+                    with st.expander("🔀 Routing decision", expanded=True):
+                        routing = result.get("routing", {})
+                        r1, r2 = st.columns(2)
+                        r1.markdown(
+                            f"- **Companies detected:** {', '.join(routing.get('tickers') or []) or '—'}\n"
+                            f"- **Metrics detected:** {', '.join(routing.get('metrics') or []) or '—'}\n"
+                            f"- **Years detected:** {', '.join(str(y) for y in routing.get('years') or []) or '—'}\n"
+                            f"- **Risk theme:** {routing.get('risk') or '—'}"
+                        )
+                        flags = [
+                            name.replace("wants_", "")
+                            for name in (
+                                "wants_comparison", "wants_growth", "wants_ratio",
+                                "wants_relationship", "wants_narrative",
+                            )
+                            if routing.get(name)
+                        ]
+                        r2.markdown(f"- **Question shape:** {', '.join(flags) or 'plain lookup'}")
+
+                    # ── Verification detail ─────────────────────────────────
+                    with st.expander("🔍 Verification detail"):
+                        for check in verification.get("checks", []):
+                            st.markdown(f"- {check}")
+                        if verification.get("unsupported_numbers"):
+                            st.error(
+                                "Figures not traceable to evidence: "
+                                + ", ".join(verification["unsupported_numbers"])
+                            )
+                        if verification.get("llm_reasoning"):
+                            st.caption(f"Judge: {verification['llm_reasoning']}")
+
+                    # ── Execution trace ─────────────────────────────────────
+                    with st.expander("⚙️ Execution trace"):
+                        trace_rows = []
+                        for step in result.get("trace", []):
+                            trace_rows.append(
+                                {
+                                    "step": step.get("step"),
+                                    "detail": ", ".join(
+                                        f"{k}={v}"
+                                        for k, v in step.items()
+                                        if k not in ("step", "signals")
+                                    ),
+                                }
+                            )
+                        if trace_rows:
+                            st.dataframe(
+                                pd.DataFrame(trace_rows),
+                                use_container_width=True,
+                                hide_index=True,
+                            )
+
+                    # ── Sources ─────────────────────────────────────────────
+                    sources = result.get("sources", [])
+                    if sources:
+                        with st.expander(f"📎 Sources ({len(sources)})"):
+                            for s in sources[:20]:
+                                if s.get("type") == "xbrl":
+                                    st.markdown(
+                                        f'<div class="source-chip">'
+                                        f'<b>XBRL</b> · {s.get("ticker")} FY{s.get("year")} '
+                                        f'· {s.get("value")} '
+                                        f'· <code>{s.get("concept")}</code><br>'
+                                        f'accession {s.get("accession")}</div>',
+                                        unsafe_allow_html=True,
+                                    )
+                                else:
+                                    st.markdown(
+                                        f'<div class="source-chip">'
+                                        f'<b>{s.get("type", "source").title()}</b> · '
+                                        f'{s.get("ticker")} FY{s.get("year")} · '
+                                        f'{s.get("section", "")} p.{s.get("page_num", "?")}<br>'
+                                        f'{(s.get("text_preview") or "")[:200]}</div>',
+                                        unsafe_allow_html=True,
+                                    )
+
+    # ── v1 vs v2 comparison ─────────────────────────────────────────────────
+    st.markdown("---")
+    st.markdown("### 📊 v1 vs v2 — measured")
+
+    comparison_path = Path("data/eval/agentic_comparison.json")
+    if comparison_path.exists():
+        comparison = json.loads(comparison_path.read_text(encoding="utf-8"))
+        summary = comparison.get("summary", {})
+
+        rows = []
+        for label, key in (
+            ("Numerical accuracy", "avg_numerical_accuracy"),
+            ("Keyword overlap", "avg_keyword_overlap"),
+            ("Citation rate", "citation_rate"),
+            ("Avg latency (s)", "avg_latency_ms"),
+        ):
+            v1_val = summary.get("v1_rag", {}).get(key, 0)
+            v2_val = summary.get("v2_agentic", {}).get(key, 0)
+            if key == "avg_latency_ms":
+                v1_val, v2_val = round(v1_val / 1000, 1), round(v2_val / 1000, 1)
+            rows.append({"Metric": label, "v1 (single-pass)": v1_val, "v2 (agentic)": v2_val})
+
+        left_c, right_c = st.columns([1, 1], gap="large")
+        left_c.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+
+        by_type = comparison.get("numerical_accuracy_by_type", {})
+        if by_type:
+            fig = go.Figure()
+            types = sorted(by_type.keys())
+            for name, colour, label in (
+                ("v1_rag", "#8b949e", "v1 (single-pass)"),
+                ("v2_agentic", "#58a6ff", "v2 (agentic)"),
+            ):
+                fig.add_trace(go.Bar(
+                    name=label,
+                    x=types,
+                    y=[by_type[t].get(name, 0) for t in types],
+                    marker_color=colour,
+                ))
+            fig.update_layout(
+                barmode="group",
+                title="Numerical accuracy by question type",
+                template="plotly_dark",
+                paper_bgcolor="#0d1117",
+                plot_bgcolor="#161b22",
+                legend=dict(orientation="h", yanchor="bottom", y=1.02),
+                yaxis=dict(range=[0, 1.05]),
+            )
+            right_c.plotly_chart(fig, use_container_width=True)
+
+        routing_accuracy = comparison.get("routing_accuracy")
+        if routing_accuracy is not None:
+            st.caption(
+                f"Supervisor routing accuracy: {routing_accuracy:.0%} "
+                f"({comparison.get('routing_correct')}/{comparison.get('routing_total')} "
+                f"questions dispatched to the expected specialist) · "
+                f"Verification verdicts: {comparison.get('verification_verdicts', {})}"
+            )
+    else:
+        st.info(
+            "No comparison data yet. Run:\n\n"
+            "`python scripts/build_agentic_eval.py`\n\n"
+            "`python scripts/run_v1_v2_comparison.py`"
+        )

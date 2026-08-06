@@ -1,0 +1,549 @@
+{
+  "total_questions": 18,
+  "summary": {
+    "v1_rag": {
+      "avg_keyword_overlap": 0.1724,
+      "avg_numerical_accuracy": 0.3677,
+      "citation_rate": 1.0,
+      "avg_latency_ms": 13773.1
+    },
+    "v2_agentic": {
+      "avg_keyword_overlap": 0.4334,
+      "avg_numerical_accuracy": 0.6958,
+      "citation_rate": 1.0,
+      "avg_latency_ms": 11404.0
+    }
+  },
+  "numerical_accuracy_by_type": {
+    "multi_hop_numeric": {
+      "v1_rag": 0.0667,
+      "v2_agentic": 0.9333
+    },
+    "ratio": {
+      "v1_rag": 0.0,
+      "v2_agentic": 0.5
+    },
+    "cross_company": {
+      "v1_rag": 0.0952,
+      "v2_agentic": 0.6191
+    },
+    "relationship": {
+      "v1_rag": 1.0,
+      "v2_agentic": 0.5
+    },
+    "qualitative": {
+      "v1_rag": 1.0,
+      "v2_agentic": 1.0
+    }
+  },
+  "routing_accuracy": 1.0,
+  "routing_correct": 18,
+  "routing_total": 18,
+  "verification_verdicts": {
+    "grounded": 17,
+    "partially_grounded": 1
+  },
+  "per_question_results": [
+    {
+      "question_id": 1,
+      "question": "How much did revenue change for AAPL between FY2022 and FY2023?",
+      "question_type": "multi_hop_numeric",
+      "difficulty": "medium",
+      "reference_answer": "AAPL revenue went from $394.33B in FY2022 to $383.29B in FY2023, a change of -2.80%.",
+      "v1_rag": {
+        "answer": "## Comparison Analysis\n\n| Company | Revenue | Net Income | Operating Margin |\n|---------|---------|------------|-----------------|\n| AAPL    | $365.3B  | $94.7B     | 34.5%           |\n| NVDA    | $53.8B   | $21.1B     | 39.4%           |\n\n## Key Differences\n\n- **Revenue Growth:** NVDA's revenue grew by $11.9 billion (or 26.3%) from FY2022 to FY2023, while AAPL's revenue remained relatively stable at $365.3 billion.\n- **Profitability Comparison:** Both companies reported significant net income, but AAPL's operating margin was slightly higher at 34.5% compared to NVDA's 39.4%.\n- **Efficiency Metrics:** No direct comparison available in the provided sources.\n\n## Summary\nThe revenue growth of NVDA outpaced that of AAPL between FY2022 and FY2023. While both companies demonstrated strong profitability, their operating margins showed a slight difference. Further analysis would be required to assess efficiency metrics.\n\nContext from SEC 10-K filings:\n[Source: AAPL 2023 10-K | Section: SECURITIES AND EXCHANGE COMMISSION | Page: 1 | Type: text]\nCommon Stock, $0.00001 par value per share\nAAPL The Nasdaq Stock Market LLC\n\n---\n\n[Source: AAPL 2022 10-K | Section: SECURITIES AND EXCHANGE COMMISSION | Page: 1 | Type: text]\nAAPL\n---\n\n[Source: NVDA 2023 10-K | Section: ITEM 1. | Page: 7 | Type: text]\n. In fiscal year 2023, our supply exceeded our demand in several areas, and our revenue did not follow historical seasonal patterns. Historical seasonality trends may not repeat.\n\n---\n\n[Source: AAPL 2022 10-K | Section: CONSOLIDATED STATEMENTS OF CASH FLOWS | Page: 41 | Type: text]\nHow We Addressed the\n\n---\n\n[Source: GOOGL 2022 10-K | Section: ITEM 1. | Page: 6 | Type: text]\nHow we make money",
+        "keyword_overlap": 0.1146,
+        "numerical_accuracy": 0.0,
+        "latency_ms": 14613.76,
+        "num_sources": 5
+      },
+      "v2_agentic": {
+        "answer": "AAPL's revenue decreased by $11.04 billion (-2.80%) from FY2022 to FY2023.\n\nAAPL FY2022 Revenue from Contract with Customer, Excluding Assessed Tax: $394.33B\nAAPL FY2023 Revenue from Contract with Customer, Excluding Assessed Tax: $383.29B",
+        "keyword_overlap": 0.5854,
+        "numerical_accuracy": 1.0,
+        "latency_ms": 5084.29,
+        "num_sources": 2,
+        "agents_used": [
+          "xbrl",
+          "calculation"
+        ],
+        "verification": "grounded",
+        "confidence": 1.0,
+        "routing_correct": true
+      }
+    },
+    {
+      "question_id": 2,
+      "question": "How much did R&D expense change for NVDA between FY2022 and FY2023?",
+      "question_type": "multi_hop_numeric",
+      "difficulty": "medium",
+      "reference_answer": "NVDA R&D expense went from $5.27B in FY2022 to $7.34B in FY2023, a change of +39.31%.",
+      "v1_rag": {
+        "answer": "## Comparison Analysis\n\n| Company | Revenue | Net Income | Operating Margin |\n|---------|---------|------------|-----------------|\n| NVDA    | $53.8B  | $21.1B     | 39.4%           |\n| AAPL    | $365.3B | $94.7B     | 34.5%           |\n\n## Key Differences\n\n- **R&D Expense Change:** NVDA's R&D expense increased by $10.0 billion ($21.1B - $11.1B) between FY2022 and FY2023, while AAPL's R&D expense decreased by $13.4 billion ($94.7B - $81.3B).\n- **Profitability:** NVDA's operating margin is significantly higher than AAPL's, indicating a more efficient use of resources.\n- **Efficiency:** NVDA's ability to increase revenue and net income while maintaining a high operating margin suggests a more efficient business model.\n\n## Summary\nNVDA's significant increase in R&D expense between FY2022 and FY2023 was driven by growth in headcount-related expenses and engineering program costs. In contrast, AAPL's decrease in R&D expense was primarily due to a reduction in depreciation expense. NVDA's higher operating margin suggests a more efficient use of resources, while AAPL's lower operating margin may indicate some inefficiencies in its business model.\n\n---\n\n[Source: GOOGL 2023 10-K | Section: ITEM 7. | Page: 22 | Type: text]\n\u2022 In January 2023, we completed an assessment of the useful lives of our servers and network equipment, resulting in a change in the estimated useful life of our servers and certain network equipment to six years. The effect of this change was a reduction in depreciation expense of $3.9 billion for the year ended December 31, 2023, recognized primarily in cost of revenues and R&D expenses\n\n---\n\n[Source: AAPL 2022 10-K | Section: PART II | Page: 17 | Type: text]\nThe year-over-year growth in R&D expense in 2022 was driven primarily by increases in headcount-related expenses and engineering program costs.\n\n---\n\n[Source: AAPL 2023 10-K | Section: PART II | Page: 16 | Type: text]\nThe year-over-year growth in R&D expense in 2023 was driven primarily by increases in headcount-related expenses.\n\n---\n\n[Source: NVDA 2023 10-K | Section: NOTES TO THE CONSOLIDATED FINANCIAL STATEMENTS | Page: 54 | Type: text]\nDepreciation expense for fiscal years 2023, 2022, and 2021 was $844 million, $611 million, and $486 million, respectively.\n\n---\n\n[Source: NVDA 2023 10-K | Section: NVIDIA CORP ORATION | Page: 1 | Type: text]\nCommon Stock, $0.001 par value per share NVDA The Nasdaq Global Select Market",
+        "keyword_overlap": 0.1648,
+        "numerical_accuracy": 0.3333,
+        "latency_ms": 18138.34,
+        "num_sources": 5
+      },
+      "v2_agentic": {
+        "answer": "The Research and Development Expense for NVDA increased by $2.07B ($7.34B - $5.27B), representing a +39.31% change from FY2022 to FY2023.\n\nNVDA FY2022 10-K (accession 0001045810-22-000036, filed 2022-03-18): Research and Development Expense = $5.27B\nNVDA FY2023 10-K (accession 0001045810-23-000017, filed 2023-02-24): Research and Development Expense = $7.34B",
+        "keyword_overlap": 0.4828,
+        "numerical_accuracy": 1.0,
+        "latency_ms": 7123.94,
+        "num_sources": 2,
+        "agents_used": [
+          "xbrl",
+          "calculation"
+        ],
+        "verification": "grounded",
+        "confidence": 1.0,
+        "routing_correct": true
+      }
+    },
+    {
+      "question_id": 3,
+      "question": "How much did net income change for GOOGL between FY2022 and FY2023?",
+      "question_type": "multi_hop_numeric",
+      "difficulty": "medium",
+      "reference_answer": "GOOGL net income went from $59.97B in FY2022 to $73.80B in FY2023, a change of +23.05%.",
+      "v1_rag": {
+        "answer": "## Comparison Analysis\n\n| Company | Revenue | Net Income | Operating Margin |\n|---------|---------|------------|-----------------|\n| AAPL    | $365.3B | $94.7B     | 34.5%           |\n| NVDA    | $53.8B  | $21.1B     | 39.4%           |\n| GOOGL   | $281.9B | $40.2B     | 14.3%           |\n\n## Key Differences\n\n- **Revenue Growth:** GOOGL's revenue grew by 26.5% from FY2022 to FY2023, while AAPL's revenue increased by 34.8% and NVDA's revenue rose by 44.6%.\n- **Profitability:** GOOGL's net income margin decreased from 14.1% in FY2022 to 14.3% in FY2023, whereas AAPL's operating margin remained relatively stable at 34.5%, and NVDA's operating margin increased from 39.4% to 40.6%.\n- **Efficiency:** GOOGL's net income was impacted by a $10.1B loss related to investments, while AAPL reported a $273M gain and NVDA saw a $21.1B increase in net change related to derivatives.\n\n## Summary\nGOOGL's revenue growth was lower than that of AAPL and NVDA, but its operating margin remained relatively stable. The company's profitability was affected by significant losses related to investments. Overall, GOOGL's efficiency improvements were not enough to offset the impact of these losses on net income.\n\nContext from SEC 10-K filings:\n[Source: GOOGL 2023 10-K | Section: COMPREHENSIVE INCOME STATEMENTS | Page: 45 | Type: text]\nNet change related to investments\n- $10.1B loss\n\n[Source: GOOGL 2022 10-K | Section: PART II | Page: 71 | Type: text]\nNet income available for common shareholders (A)\n- $40.2B",
+        "keyword_overlap": 0.1692,
+        "numerical_accuracy": 0.0,
+        "latency_ms": 14163.28,
+        "num_sources": 5
+      },
+      "v2_agentic": {
+        "answer": "GOOGL's net income increased by $13.82 billion ($73.80B - $59.97B) from FY2022 to FY2023, representing a 23.05% growth rate ((73,795,000,000 - 59,972,000,000) / |59,972,000,000| x 100 = +23.05%).",
+        "keyword_overlap": 0.6087,
+        "numerical_accuracy": 1.0,
+        "latency_ms": 6289.16,
+        "num_sources": 2,
+        "agents_used": [
+          "xbrl",
+          "calculation"
+        ],
+        "verification": "grounded",
+        "confidence": 1.0,
+        "routing_correct": true
+      }
+    },
+    {
+      "question_id": 4,
+      "question": "How much did operating cash flow change for AMZN between FY2022 and FY2023?",
+      "question_type": "multi_hop_numeric",
+      "difficulty": "hard",
+      "reference_answer": "AMZN operating cash flow went from $46.75B in FY2022 to $84.95B in FY2023, a change of +81.69%.",
+      "v1_rag": {
+        "answer": "## Comparison Analysis\n\n| Company | Revenue | Net Income | Operating Margin |\n|---------|---------|------------|-----------------|\n| GOOGL   | $365.3B | $92.9B     | 35.1%           |\n| NVDA    | $53.8B  | $21.1B     | 39.4%           |\n| AMZN    | $116.7B | $22.6B     | 19.4%           |\n\n## Key Differences\n\n- **Revenue Growth:** GOOGL's revenue grew by $23.5 billion (6.3%) from FY2022 to FY2023, while NVDA's revenue increased by $53.8 billion (99.1%). AMZN's revenue rose by $44.0 billion (38.0%).\n- **Profitability:** GOOGL's net income margin decreased from 35.1% in FY2022 to 35.1% in FY2023, while NVDA's operating margin remained stable at 39.4%. AMZN's operating margin declined from 19.4% in FY2022 to 19.4% in FY2023.\n- **Efficiency:** GOOGL's operating cash flow increased by $9.2 billion (10.0%) from FY2022 to FY2023, while NVDA's operating cash flow rose by $48.8 billion (90.5%). AMZN's operating cash flow grew by $10.2 billion (44.7%).\n\n## Summary\nGOOGL and NVDA demonstrated significant revenue growth in FY2023, with GOOGL's revenue increasing by 6.3% and NVDA's revenue rising by 99.1%. In contrast, AMZN's revenue growth was more modest at 38.0%. Despite this, all three companies maintained stable or increased operating margins, indicating efficient operations.\n\n---\n\n[Source: GOOGL 2022 10-K | Section: ITEM 7. | Page: 21 | Type: text]\n\u2022 Operating cash flow was $91.5 billion for the year ended December 31, 2022.\n---\n\n[Source: GOOGL 2023 10-K | Section: ITEM 7. | Page: 22 | Type: text]\n\u2022 Operating cash flow was $101.7 billion for the year ended December 31, 2023.\n---\n\n[Source: AMZN 2022 10-K | Section: PART II | Page: 19 | Type: text]\nFree cash flow is cash flow from operations reduced by \u201cPurchases of property and equipment, net of proceeds from sales and incentives.\u201d The following is a reconciliation of free cash flow to the most comparable GAAP cash flow measure, \u201cNet cash provided by (used in) operating activities,\u201d for 2021 and 2022 (in millions):\n---\n\n[Source: AMZN 2023 10-K | Section: PART II | Page: 19 | Type: text]\nFree cash flow is cash flow from operations reduced by \u201cPurchases of property and equipment, net of proceeds from sales and incentives.\u201d The following is a reconciliation of free cash flow to the most comparable GAAP cash flow measure, \u201cNet cash provided by (used in) operating activities,\u201d for 2022 and 2023 (in millions):\n---\n\n[Source: AMZN 2023 10-K | Section: PART II | Page: 19 | Type: text]\nFree Cash Flow\n---",
+        "keyword_overlap": 0.1477,
+        "numerical_accuracy": 0.0,
+        "latency_ms": 21536.92,
+        "num_sources": 4
+      },
+      "v2_agentic": {
+        "answer": "AMZN's operating cash flow increased by $38.19B ($84,946,000,000 - $46,752,000,000) from FY2022 to FY2023.\n\nAMZN FY2022 Net Cash Provided by (Used in) Operating Activities: $46.75B\nAMZN FY2023 Net Cash Provided by (Used in) Operating Activities: $84.95B",
+        "keyword_overlap": 0.5909,
+        "numerical_accuracy": 0.6667,
+        "latency_ms": 5788.15,
+        "num_sources": 2,
+        "agents_used": [
+          "xbrl",
+          "calculation"
+        ],
+        "verification": "grounded",
+        "confidence": 1.0,
+        "routing_correct": true
+      }
+    },
+    {
+      "question_id": 5,
+      "question": "How much did revenue change for MSFT between FY2022 and FY2023?",
+      "question_type": "multi_hop_numeric",
+      "difficulty": "medium",
+      "reference_answer": "MSFT revenue went from $198.27B in FY2022 to $211.91B in FY2023, a change of +6.88%.",
+      "v1_rag": {
+        "answer": "## Comparison Analysis\n\n| Company | Revenue Change | Net Income Change | Operating Margin Change |\n|---------|-----------------|--------------------|--------------------------|\n| MSFT    | $X.XB         | $Y.YB              | ZZ.Z%                    |\n| NVDA    | $Z.WB          | $A.AB               | BB.B%                     |\n| AAPL    | $C.DB           | $E.FB              | G.H%                      |\n\n## Key Differences\n\n- **Revenue Growth:** MSFT's revenue decreased by X.X%, while NVDA's revenue increased by Z.W%. This suggests that MSFT faced challenges in maintaining its historical seasonal patterns, whereas NVDA was able to capitalize on new demand.\n- **Profitability Comparison:** NVDA reported a higher operating margin of BB.B% compared to AAPL's G.H%. However, MSFT's net income change is not explicitly stated in the provided text, making it difficult to compare profitability directly.\n- **Efficiency and Cost Management:** AAPL addressed its supply-demand imbalance by implementing cost-saving measures, as mentioned in their 10-K filing. This suggests that AAPL prioritized efficiency over revenue growth.\n\n## Summary\nThe comparison of MSFT's, NVDA's, and AAPL's financial performance reveals differences in revenue growth, profitability, and efficiency. While MSFT faced challenges in maintaining seasonal patterns, NVDA capitalized on new demand, and AAPL focused on cost management to address supply-demand imbalances.\n\nContext from SEC 10-K filings:\n[Source: MSFT 2022 10-K | Section: MICROSOFT CORPORATION | Page: 2 | Type: text]\nMSFT\n---\n\n[Source: NVDA 2023 10-K | Section: ITEM 1. | Page: 7 | Type: text]\n. In fiscal year 2023, our supply exceeded our demand in several areas, and our revenue did not follow historical seasonal patterns. Historical seasonality trends may not repeat.\n---\n\n[Source: AAPL 2023 10-K | Section: CONSOLIDATED STATEMENTS OF CASH FLOWS | Page: 40 | Type: text]\nHow We Addressed the\n---\n\n[Source: GOOGL 2022 10-K | Section: ITEM 1. | Page: 6 | Type: text]\nHow we make money",
+        "keyword_overlap": 0.1146,
+        "numerical_accuracy": 0.0,
+        "latency_ms": 16142.05,
+        "num_sources": 4
+      },
+      "v2_agentic": {
+        "answer": "MSFT revenue increased by $13.64 billion ($211.91B - $198.27B) from FY2022 to FY2023, representing a 6.88% growth rate ((211,915,000,000 - 198,270,000,000) / |198,270,000,000| x 100 = +6.88%).\n\nMSFT FY2022 Revenue from Contract with Customer, Excluding Assessed Tax: $198.27B\nMSFT FY2023 Revenue from Contract with Customer, Excluding Assessed Tax: $211.91B",
+        "keyword_overlap": 0.5306,
+        "numerical_accuracy": 1.0,
+        "latency_ms": 8925.13,
+        "num_sources": 2,
+        "agents_used": [
+          "xbrl",
+          "calculation"
+        ],
+        "verification": "grounded",
+        "confidence": 1.0,
+        "routing_correct": true
+      }
+    },
+    {
+      "question_id": 6,
+      "question": "What was NVDA's R&D spend as a percentage of revenue in FY2023?",
+      "question_type": "ratio",
+      "difficulty": "hard",
+      "reference_answer": "NVDA spent $7.34B on R&D spend against revenue of $26.97B in FY2023, or 27.21% of revenue.",
+      "v1_rag": {
+        "answer": "## Step 1: Identify the relevant information from the provided context\n\n\nThe relevant information is related to NVDA's R&D spend as a percentage of revenue in FY2023. However, the provided context does not explicitly mention this specific metric.\n\n\n## Step 2: Analyze the available data and identify potential sources\n\n\nFrom the given context, we can see that MSFT (Microsoft) provides some relevant information about unearned revenue by segment, but it does not directly relate to NVDA's R&D spend. We also need to look at AAPL (Apple)'s 10-K filings for more information.\n\n\n## Step 3: Examine the provided context from AAPL's 2022 and 2023 10-K filings\n\n\nUpon examining the provided context, we find that it mentions increases in headcount-related expenses as a driver of year-over-year growth in R&D expense in 2023. However, it does not provide information on NVDA's R&D spend as a percentage of revenue.\n\n\n## Step 4: Conclude based on available data\n\n\nBased on the provided context, we cannot determine NVDA's R&D spend as a percentage of revenue in FY2023 with certainty.\n\n\nThe final answer is: $\\boxed{Cannot be determined}$",
+        "keyword_overlap": 0.1565,
+        "numerical_accuracy": 0.0,
+        "latency_ms": 10093.21,
+        "num_sources": 5
+      },
+      "v2_agentic": {
+        "answer": "NVDA's R&D spend as a percentage of revenue in FY2023 was 27.21%.\n\nSupporting figures:\n- NVDA FY2023 Research and Development Expense: $7,339,000,000\n- NVDA FY2023 Revenues: $26,974,000,000\n- Change from previous year (FY2022): \n  - NVDA FY2022 Research and Development Expense: $6,434,000,000 (unavailable in the provided evidence)\n  - NVDA FY2022 Revenues: $24,934,000,000",
+        "keyword_overlap": 0.4138,
+        "numerical_accuracy": 0.3333,
+        "latency_ms": 8045.96,
+        "num_sources": 2,
+        "agents_used": [
+          "xbrl",
+          "calculation"
+        ],
+        "verification": "partially_grounded",
+        "confidence": 0.7,
+        "routing_correct": true
+      }
+    },
+    {
+      "question_id": 7,
+      "question": "What was AAPL's R&D spend as a percentage of revenue in FY2023?",
+      "question_type": "ratio",
+      "difficulty": "hard",
+      "reference_answer": "AAPL spent $29.91B on R&D spend against revenue of $383.29B in FY2023, or 7.80% of revenue.",
+      "v1_rag": {
+        "answer": "## R&D Spend as a Percentage of Revenue in FY2023\n\n\nThe provided context does not explicitly state AAPL's R&D spend as a percentage of revenue in FY2023. However, it mentions that the year-over-year growth in R&D expense in 2023 was driven primarily by increases in headcount-related expenses.\n\n\n## Source:\n\n\n[Source: AAPL 2023 10-K | Section: PART II | Page: 16 | Type: text]\nThe year-over-year growth in R&D expense in 2023 was driven primarily by increases in headcount-related expenses.",
+        "keyword_overlap": 0.25,
+        "numerical_accuracy": 0.0,
+        "latency_ms": 5628.91,
+        "num_sources": 5
+      },
+      "v2_agentic": {
+        "answer": "AAPL's R&D spend as a percentage of revenue in FY2023 was 7.80%.\n\nSupporting figures:\nAAPL FY2023 Research and Development Expense: $29,915,000,000 [AAPL FY2023 10-K (accession 0000320193-23-000106, filed 2023-11-03) [XBRL: us-gaap:ResearchAndDevelopmentExpense]]\nAAPL FY2023 Revenue from Contract with Customer, Excluding Assessed Tax: $383,285,000,000 [AAPL FY2023 10-K (accession 0000320193-23-000106, filed 2023-11-03) [XBRL: us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax]]",
+        "keyword_overlap": 0.3636,
+        "numerical_accuracy": 0.3333,
+        "latency_ms": 9297.51,
+        "num_sources": 2,
+        "agents_used": [
+          "xbrl",
+          "calculation"
+        ],
+        "verification": "grounded",
+        "confidence": 1.0,
+        "routing_correct": true
+      }
+    },
+    {
+      "question_id": 8,
+      "question": "What was MSFT's R&D spend as a percentage of revenue in FY2023?",
+      "question_type": "ratio",
+      "difficulty": "hard",
+      "reference_answer": "MSFT spent $27.20B on R&D spend against revenue of $211.91B in FY2023, or 12.83% of revenue.",
+      "v1_rag": {
+        "answer": "## Step 1: Identify the relevant information from the provided context\n\n\nThe relevant information is related to MSFT's R&D spend as a percentage of revenue in FY2023. However, the context does not provide explicit numbers or percentages for this specific metric.\n\n\n## Step 2: Analyze the structure of the provided text\n\n\nThe text is organized into sections and pages within the 10-K filings of various companies (AAPL and MSFT). The relevant section for MSFT's R&D spend as a percentage of revenue in FY2023 is not explicitly mentioned.\n\n\n## Step 3: Determine if enough information is available to answer the question\n\n\nBased on the provided context, it appears that there is no explicit mention of MSFT's R&D spend as a percentage of revenue in FY2023. The relevant section for operating expenses (MSFT 2023 10-K | Section: OPERATING EXPENSES) does not provide this information.\n\n\n## Step 4: Conclude based on the available information\n\n\nSince there is no explicit mention of MSFT's R&D spend as a percentage of revenue in FY2023, it cannot be determined with certainty. The context lacks enough information to answer this question accurately.\n\n\nThe final answer is: $\\boxed{N/A}$",
+        "keyword_overlap": 0.1923,
+        "numerical_accuracy": 0.0,
+        "latency_ms": 10332.74,
+        "num_sources": 5
+      },
+      "v2_agentic": {
+        "answer": "MSFT's R&D spend as a percentage of revenue in FY2023 was 12.83%, with MSFT FY2023 Research and Development Expense being $27.20B and MSFT FY2023 Revenue from Contract with Customer, Excluding Assessed Tax being $211.91B.\n\nSupporting figures:\n\n- MSFT FY2023 Research and Development Expense: $27.20B [MSFT FY2023 10-K (accession 0000950170-23-035122, filed 2023-07-27) [XBRL: us-gaap:ResearchAndDevelopmentExpense]]\n- MSFT FY2023 Revenue from Contract with Customer, Excluding Assessed Tax: $211.91B [MSFT FY2023 10-K (accession 0000950170-23-035122, filed 2023-07-27) [XBRL: us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax]]",
+        "keyword_overlap": 0.4308,
+        "numerical_accuracy": 1.0,
+        "latency_ms": 11517.72,
+        "num_sources": 2,
+        "agents_used": [
+          "xbrl",
+          "calculation"
+        ],
+        "verification": "grounded",
+        "confidence": 1.0,
+        "routing_correct": true
+      }
+    },
+    {
+      "question_id": 9,
+      "question": "What was GOOGL's net income as a percentage of revenue in FY2023?",
+      "question_type": "ratio",
+      "difficulty": "medium",
+      "reference_answer": "GOOGL spent $73.80B on net income against revenue of $307.39B in FY2023, or 24.01% of revenue.",
+      "v1_rag": {
+        "answer": "## Step 1: Identify the required information\nWe need to find GOOGL's net income as a percentage of revenue in FY2023.\n\n## Step 2: Analyze the provided context\nThe context from SEC 10-K filings does not provide specific information about GOOGL's net income as a percentage of revenue for FY2023.\n\n## Step 3: Determine the lack of sufficient information\nBased on the provided context, we cannot determine GOOGL's net income as a percentage of revenue for FY2023.\n\n\nThe final answer is: $\\boxed{Not Available}$",
+        "keyword_overlap": 0.2462,
+        "numerical_accuracy": 0.0,
+        "latency_ms": 6956.23,
+        "num_sources": 5
+      },
+      "v2_agentic": {
+        "answer": "GOOGL's net income as a percentage of revenue in FY2023 was 24.01%.\n\nSupporting figures:\nGOOGL FY2023 Net Income (Loss) Attributable to Parent: $73,795,000,000 [73,795,000,000 / \nGOOGL FY2023 Revenue from Contract with Customer, Excluding Assessed Tax: $307,394,000,000 = 24.01%",
+        "keyword_overlap": 0.449,
+        "numerical_accuracy": 0.3333,
+        "latency_ms": 6929.57,
+        "num_sources": 2,
+        "agents_used": [
+          "xbrl",
+          "calculation"
+        ],
+        "verification": "grounded",
+        "confidence": 1.0,
+        "routing_correct": true
+      }
+    },
+    {
+      "question_id": 10,
+      "question": "How much faster did NVDA's R&D spend grow than MSFT's between FY2022 and FY2023?",
+      "question_type": "cross_company",
+      "difficulty": "hard",
+      "reference_answer": "NVDA R&D spend grew +39.31% (from $5.27B to $7.34B) while MSFT grew +10.95% (from $24.51B to $27.20B). NVDA grew faster by 28.37 percentage points.",
+      "v1_rag": {
+        "answer": "## Comparison Analysis\n\n| Company | Revenue Growth | Net Income Growth | Operating Margin Growth |\n|---------|-----------------|--------------------|------------------------|\n| AMZN   | $8.5% - 13.0%  | N/A                | N/A                   |\n| NVDA    | N/A             | N/A                | N/A                   |\n| MSFT    | N/A             | N/A                | N/A                   |\n\n## Key Differences\n\n- **Revenue Growth:** AMZN's revenue growth guidance is wider than NVDA's, while MSFT's revenue growth guidance is not provided.\n- **Profitability:** No direct comparison can be made between the companies' profitability due to lack of information in the provided sources.\n- **Efficiency:** No direct comparison can be made between the companies' efficiency due to lack of information in the provided sources.\n\n## Summary\nThe comparison analysis highlights the differences in revenue growth guidance and net income growth guidance between AMZN, NVDA, and MSFT. However, more information is needed to make a comprehensive comparison of profitability and efficiency between these companies.\n\n\n[Source: AMZN 2023 10-K | Section: PART II | Page: 22 | Type: text]\n\u2022 Net sales are expected to be between $138.0 billion and $143.5 billion, or to grow between 8% and 13% compared with first quarter 2023. This guidance anticipates a favorable impact of approximately 40 basis points from foreign exchange rates.\n\n[Source: NVDA 2023 10-K | Section: ITEM 7. | Page: 22 | Type: text]\nAutomotive revenue for fiscal year 2023 grew 60% compared to fiscal year 2022 to $903 million. In Automotive, we started production of the NVIDIA DRIVE Orin autonomous vehicle SOC and introduced next-generation NVIDIA DRIVE Thor.\n\n[Source: GOOGL 2023 10-K | Section: ITEM 7. | Page: 20 | Type: text]\nThe main components of our R&D expenses are:\n---\n\n[Source: NVDA 2023 10-K | Section: ITEM 7. | Page: 24 | Type: text]\nCompute & Networking - The year-on-year increase was led by growth from hyperscale customers and also reflects purchases made by several CSP partners to support multi-year cloud service agreements for our new NVIDIA AI cloud service offerings and our research and development activities. The increase was also related to the growth in Automotive. CMP contributed an insignificant amount in fiscal year 2023 compared to $550 million in fiscal year 2022.\n\n---\n\nNote: MSFT's data is not included as it was not provided in the given sources.",
+        "keyword_overlap": 0.1489,
+        "numerical_accuracy": 0.2857,
+        "latency_ms": 24066.06,
+        "num_sources": 5
+      },
+      "v2_agentic": {
+        "answer": "NVDA's R&D spend grew 39.31% between FY2022 and FY2023, which is 28.37 percentage points faster than MSFT's growth of +10.95%. \n\nMSFT FY2022 Research and Development Expense: $24.51B \u2014 MSFT FY2022 10-K (accession 0001564590-22-026876, filed 2022-07-28) [XBRL: us-gaap:ResearchAndDevelopmentExpense]\nMSFT FY2023 Research and Development Expense: $27.20B \u2014 MSFT FY2023 10-K (accession 0000950170-23-035122, filed 2023-07-27) [XBRL: us-gaap:ResearchAndDevelopmentExpense]\nNVDA FY2022 Research and Development Expense: $5.27B \u2014 NVDA FY2022 10-K (accession 0001045810-22-000036, filed 2022-03-18) [XBRL: us-gaap:ResearchAndDevelopmentExpense]\nNVDA FY2023 Research and Development Expense: $7.34B \u2014 NVDA FY2023 10-K (accession 0001045810-23-000017, filed 2023-02-24) [XBRL: us-gaap:ResearchAndDevelopmentExpense]",
+        "keyword_overlap": 0.5412,
+        "numerical_accuracy": 1.0,
+        "latency_ms": 15029.23,
+        "num_sources": 4,
+        "agents_used": [
+          "xbrl",
+          "calculation"
+        ],
+        "verification": "grounded",
+        "confidence": 1.0,
+        "routing_correct": true
+      }
+    },
+    {
+      "question_id": 11,
+      "question": "How much faster did GOOGL's revenue grow than AAPL's between FY2022 and FY2023?",
+      "question_type": "cross_company",
+      "difficulty": "hard",
+      "reference_answer": "GOOGL revenue grew +8.68% (from $282.84B to $307.39B) while AAPL grew -2.80% (from $394.33B to $383.29B). GOOGL grew faster by 11.48 percentage points.",
+      "v1_rag": {
+        "answer": "## Comparison Analysis\n\n| Company | Revenue Growth | Net Income Growth | Operating Margin Growth |\n|---------|-----------------|--------------------|-------------------------|\n| AMZN   | $8.0% - 12.0%  | N/A                | N/A                    |\n| NVDA    | N/A             | N/A                | N/A                    |\n| AAPL    | N/A             | N/A                | N/A                    |\n\n## Key Differences\n\n- **Revenue Growth:** AMZN's revenue growth was significantly higher than NVDA and AAPL, with a range of 8.0% to 12.0%. In contrast, NVDA and AAPL did not provide specific revenue growth guidance.\n- **Profitability:** NVDA reported a higher operating margin in FY2023 compared to FY2022, while AMZN and AAPL did not provide comparable data.\n- **Efficiency:** AAPL mentioned addressing cash flow issues in their 10-K filing, but no information was provided on NVDA or AMZN.\n\n## Summary\nAMZN's revenue growth was significantly higher than its peers, driven by favorable foreign exchange rates. NVDA and AAPL did not provide specific revenue guidance, but reported higher operating margins in FY2023 compared to FY2022. AAPL addressed cash flow issues in their 10-K filing.\n\n---\n\n[Source: AMZN 2022 10-K | Section: PART II | Page: 21 | Type: text]\n\u2022 Net sales are expected to be between $121.0 billion and $126.0 billion, or to grow between 4% and 8% compared with first quarter 2022. This guidance anticipates an unfavorable impact of approximately 210 basis points from foreign exchange rates.\n\n---\n\n[Source: AMZN 2023 10-K | Section: PART II | Page: 22 | Type: text]\n\u2022 Net sales are expected to be between $138.0 billion and $143.5 billion, or to grow between 8% and 13% compared with first quarter 2023. This guidance anticipates a favorable impact of approximately 40 basis points from foreign exchange rates.\n\n---\n\n[Source: NVDA 2023 10-K | Section: ITEM 1. | Page: 7 | Type: text]\n. In fiscal year 2023, our supply exceeded our demand in several areas, and our revenue did not follow historical seasonal patterns. Historical seasonality trends may not repeat.\n\n---\n\n[Source: AAPL 2022 10-K | Section: CONSOLIDATED STATEMENTS OF CASH FLOWS | Page: 41 | Type: text]\nHow We Addressed the\n---\n\n[Source: GOOGL 2022 10-K | Section: ITEM 1. | Page: 6 | Type: text]\nHow we make money",
+        "keyword_overlap": 0.1098,
+        "numerical_accuracy": 0.0,
+        "latency_ms": 25640.47,
+        "num_sources": 5
+      },
+      "v2_agentic": {
+        "answer": "GOOGL's revenue grew 11.48 percentage points faster than AAPL between FY2022 and FY2023.\n\nAAPL FY2022 Revenue from Contract with Customer, Excluding Assessed Tax: $394.33B \u2014 AAPL FY2022 10-K (accession 0000320193-22-000108, filed 2022-10-28) [XBRL: us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax]\nAAPL FY2023 Revenue from Contract with Customer, Excluding Assessed Tax: $383.29B \u2014 AAPL FY2023 10-K (accession 0000320193-23-000106, filed 2023-11-03) [XBRL: us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax]\nGOOGL FY2022 Revenue from Contract with Customer, Excluding Assessed Tax: $282.84B \u2014 GOOGL FY2022 10-K (accession 0001652044-23-000016, filed 2023-02-03) [XBRL: us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax]\nGOOGL FY2023 Revenue from Contract with Customer, Excluding Assessed Tax: $307.39B \u2014 GOOGL FY2023 10-K (accession 0001652044-24-000022, filed 2024-01-31) [XBRL: us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax]",
+        "keyword_overlap": 0.45,
+        "numerical_accuracy": 0.7143,
+        "latency_ms": 18757.92,
+        "num_sources": 4,
+        "agents_used": [
+          "xbrl",
+          "calculation"
+        ],
+        "verification": "grounded",
+        "confidence": 1.0,
+        "routing_correct": true
+      }
+    },
+    {
+      "question_id": 12,
+      "question": "How much faster did AMZN's net income grow than AAPL's between FY2022 and FY2023?",
+      "question_type": "cross_company",
+      "difficulty": "hard",
+      "reference_answer": "AMZN net income grew +1217.74% (from -$2.72B to $30.43B) while AAPL grew -2.81% (from $99.80B to $97.00B). AMZN grew faster by 1220.56 percentage points.",
+      "v1_rag": {
+        "answer": "## Comparison Analysis\n\n| Company | Revenue Growth | Net Income Growth | Operating Margin Change |\n|---------|-----------------|--------------------|--------------------------|\n| AMZN   | -8% to 13%      | 21.1B to 38.4B     | N/A                      |\n| AAPL    | -4% to 8%       | 94.7B to 118.2B    | N/A                      |\n\n## Key Differences\n\n- **Revenue Growth:** AMZN's revenue growth is expected to be between 8% and 13%, while AAPL's revenue growth is expected to be between 4% and 8%. This indicates that AMZN's revenue growth is wider than AAPL's.\n- **Net Income Growth:** AMZN's net income grew from $21.1B in FY2022 to $38.4B in FY2023, while AAPL's net income grew from $94.7B in FY2022 to $118.2B in FY2023. This indicates that AMZN's net income growth is faster than AAPL's.\n- **Operating Margin Change:** N/A (not applicable)\n\n## Summary\nAMZN's net income growth outpaced AAPL's between FY2022 and FY2023, with AMZN growing 79% compared to AAPL's 25%. This suggests that AMZN has been more successful in increasing its profitability than AAPL during this period.\n\nContext from SEC 10-K filings:\n[Source: AMZN 2023 10-K | Section: PART II | Page: 22 | Type: text]\n\u2022 Net sales are expected to be between $138.0 billion and $143.5 billion, or to grow between 8% and 13% compared with first quarter 2023. This guidance anticipates a favorable impact of approximately 40 basis points from foreign exchange rates.\n\n[Source: AAPL 2022 10-K | Section: PART II | Page: 21 | Type: text]\n\u2022 Net sales are expected to be between $121.0 billion and $126.0 billion, or to grow between 4% and 8% compared with first quarter 2022. This guidance anticipates an unfavorable impact of approximately 210 basis points from foreign exchange rates.",
+        "keyword_overlap": 0.1504,
+        "numerical_accuracy": 0.0,
+        "latency_ms": 20475.41,
+        "num_sources": 4
+      },
+      "v2_agentic": {
+        "answer": "AMZN's net income grew $33.15B more than AAPL's net income declined $2.81B between FY2022 and FY2023.\n\nAAPL FY2022 Net Income (Loss) Attributable to Parent: $99,803,000,000\nAAPL FY2023 Net Income (Loss) Attributable to Parent: $97,000,000,000\nAMZN FY2022 Net Income (Loss) Attributable to Parent: -$2,722,000,000\nAMZN FY2023 Net Income (Loss) Attributable to Parent: $30,425,000,000",
+        "keyword_overlap": 0.3774,
+        "numerical_accuracy": 0.1429,
+        "latency_ms": 11094.08,
+        "num_sources": 4,
+        "agents_used": [
+          "xbrl",
+          "calculation"
+        ],
+        "verification": "grounded",
+        "confidence": 1.0,
+        "routing_correct": true
+      }
+    },
+    {
+      "question_id": 13,
+      "question": "Which companies share supply chain risk exposure?",
+      "question_type": "relationship",
+      "difficulty": "hard",
+      "reference_answer": "All five companies in the corpus (Apple, Microsoft, Alphabet, Amazon and NVIDIA) disclose supply chain risk in their 10-K filings. NVIDIA and Apple devote the most filing text to it.",
+      "v1_rag": {
+        "answer": "**Supply Chain Risk Exposure**\n\nThe following companies share supply chain risk exposure:\n\n- **AAPL**: The Company is exposed to credit risk on its trade accounts receivable, vendor non-trade receivables and prepayments related to long-term supply agreements, and this risk is heightened during periods when economic conditions worsen. (Source: AAPL 2023 10-K | Section: PART I | Page: 11)\n\n- **GOOGL**: We face a number of manufacturing and supply chain risks that could harm our business, financial condition, and operating results. (Source: GOOGL 2023 10-K | Section: ITEM 1A. | Page: 10)\n \n- **NVDA**: Additionally, we are incorporated into the supply chain of a large number of entities worldwide and, as a result, if our products or services are compromised, a significant number of our customers and their data could be affected, which could result in potential liability and harm our business. (Source: NVDA 2023 10-K | Section: ITEM 1A. | Page: 15)\n\nThese companies acknowledge the risks associated with supply chain disruptions, which can have significant impacts on their businesses.\n\n**No other information is available from the provided context regarding shared supply chain risk exposure.**",
+        "keyword_overlap": 0.1642,
+        "numerical_accuracy": 1.0,
+        "latency_ms": 13795.77,
+        "num_sources": 4
+      },
+      "v2_agentic": {
+        "answer": "5 of the companies in the corpus disclose supply chain risk, ranked by how much filing text they devote to it: NVIDIA (98 passages across FY2022/FY2023); Apple (83 passages across FY2022/FY2023); Amazon (44 passages across FY2022/FY2023); Microsoft (37 passages across FY2022/FY2023); Alphabet (34 passages across FY2022/FY2023).",
+        "keyword_overlap": 0.6,
+        "numerical_accuracy": 0.0,
+        "latency_ms": 3399.42,
+        "num_sources": 10,
+        "agents_used": [
+          "graph"
+        ],
+        "verification": "grounded",
+        "confidence": 1.0,
+        "routing_correct": true
+      }
+    },
+    {
+      "question_id": 14,
+      "question": "What risk themes do NVIDIA and Microsoft both disclose?",
+      "question_type": "relationship",
+      "difficulty": "hard",
+      "reference_answer": "NVIDIA and Microsoft both disclose supply chain, privacy regulation, tax, litigation, foreign exchange, cybersecurity, macroeconomic, intellectual property, geopolitical, artificial intelligence, pandemic and climate risk. Customer concentration, semiconductor supply and data centre capacity are disclosed by NVIDIA only.",
+      "v1_rag": {
+        "answer": "## Risk Themes Disclosed by NVIDIA and Microsoft\n\n\n### Breaches of Security Measures\n\n\nNVIDIA discloses that breaches of its GFN security measures could expose partners to a risk of loss or misuse of proprietary game source code, damage both the company and its partners, and expose NVIDIA to potential litigation and liability (Source: NVDA 2023 10-K | Section: ITEM 1A.).\n\n\nMicrosoft does not disclose specific information about breaches of its security measures in the provided context.\n\n\n### Litigation and Liability\n\n\nNVIDIA discloses that breaches of its GFN security measures could lead to potential litigation and liability (Source: NVDA 2023 10-K | Section: ITEM 1A.).\n\n\n\n\nNo relevant information is available from Microsoft's provided context.",
+        "keyword_overlap": 0.2,
+        "numerical_accuracy": 1.0,
+        "latency_ms": 7883.24,
+        "num_sources": 5
+      },
+      "v2_agentic": {
+        "answer": "NVIDIA and Microsoft both disclose risk themes related to changes in government regulations, including those related to data privacy and security.",
+        "keyword_overlap": 0.3137,
+        "numerical_accuracy": 1.0,
+        "latency_ms": 15384.89,
+        "num_sources": 5,
+        "agents_used": [
+          "graph",
+          "narrative"
+        ],
+        "verification": "grounded",
+        "confidence": 0.7,
+        "routing_correct": true
+      }
+    },
+    {
+      "question_id": 15,
+      "question": "Which risks does NVIDIA disclose that the other companies do not?",
+      "question_type": "relationship",
+      "difficulty": "hard",
+      "reference_answer": "NVIDIA uniquely discloses customer concentration risk and semiconductor supply risk relative to the other filers in the corpus, reflecting its fabless manufacturing model and reliance on a small number of large customers.",
+      "v1_rag": {
+        "answer": "Based on the provided context, NVIDIA discloses risks that the other companies do not in the following areas:\n\n\n- Risks related to trade secrets and confidential information:\n  NVIDIA discloses that theft or unauthorized use of their trade secrets could harm their competitive position and reduce acceptance of their products (Source: NVDA 2023 10-K | Section: ITEM 1A.).\n\n\n- Risks related to employees being hired by competitors:\n  NVIDIA also mentions the risk that their employees may be hired by competitors, which could impact their IP (Source: NVDA 2023 10-K | Section: ITEM 1A.).\n\nThe other companies do not disclose these specific risks in the provided context.",
+        "keyword_overlap": 0.2247,
+        "numerical_accuracy": 1.0,
+        "latency_ms": 7166.8,
+        "num_sources": 5
+      },
+      "v2_agentic": {
+        "answer": "NVIDIA discloses a risk related to trade secrets and confidential business information that is not mentioned by Amazon.",
+        "keyword_overlap": 0.2553,
+        "numerical_accuracy": 1.0,
+        "latency_ms": 16857.81,
+        "num_sources": 5,
+        "agents_used": [
+          "graph",
+          "narrative"
+        ],
+        "verification": "grounded",
+        "confidence": 0.7,
+        "routing_correct": true
+      }
+    },
+    {
+      "question_id": 16,
+      "question": "Which geographies does Apple name as exposure in its filings?",
+      "question_type": "relationship",
+      "difficulty": "medium",
+      "reference_answer": "Apple names China, Taiwan, Japan, India, Korea, Singapore, Vietnam, Europe, Ireland and Australia in its 10-K filings.",
+      "v1_rag": {
+        "answer": "## ## Step 1: Identify the relevant section of the Apple 2023 10-K filing\n\n\nThe Company manages its business primarily on a geographic basis. The Company\u2019s reportable segments consist of the Americas, Europe, Greater China, Japan and Rest of Asia Pacific.\n\n\n## Step 2: Determine which geographies are mentioned as exposure in Apple's filings\n\n\nAccording to the provided context, the following geographies are mentioned as part of Apple's reportable segments:\n\n\n- Americas\n- Europe\n- Greater China\n- Japan\n- Rest of Asia Pacific\n\n\nThese geographies are listed as exposure in Apple's filings.\n\n\n## Step 3: Check if any additional information is available\n\n\nNo further information is provided in the context regarding specific numbers, dates, or figures related to these geographies.\n\n\nThe final answer is: $\\boxed{Americas, Europe, Greater China, Japan and Rest of Asia Pacific}$",
+        "keyword_overlap": 0.2222,
+        "numerical_accuracy": 1.0,
+        "latency_ms": 10749.61,
+        "num_sources": 3
+      },
+      "v2_agentic": {
+        "answer": "Apple names the Americas, Europe, Greater China, Japan, and Rest of Asia Pacific as exposure geographies in its filings.",
+        "keyword_overlap": 0.4865,
+        "numerical_accuracy": 0.0,
+        "latency_ms": 19134.54,
+        "num_sources": 16,
+        "agents_used": [
+          "graph",
+          "narrative"
+        ],
+        "verification": "grounded",
+        "confidence": 0.7,
+        "routing_correct": true
+      }
+    },
+    {
+      "question_id": 17,
+      "question": "How does Apple describe its approach to customer privacy?",
+      "question_type": "qualitative",
+      "difficulty": "medium",
+      "reference_answer": "Apple describes privacy as a fundamental human right and states that it designs its products to minimise data collection, keeping data on device where possible, and notes that privacy regulation such as GDPR creates compliance obligations and risk.",
+      "v1_rag": {
+        "answer": "## Customer Privacy Approach\n\n\nThe Company describes its approach to customer privacy through its privacy policy, information provided on its website, press statements, and other privacy notices provided to customers.\n\n\nAccording to the Company's 2023 10-K filing (Section: PART I | Page: 11), any failure by the Company to comply with these public statements or with other federal, state, or international privacy or data protection laws and regulations could result in inquiries or proceedings against the Company by governmental entities or others.\n\n\nThe Company devotes significant resources to network and data security, including through the use of encryption and other security measures intended to protect its systems and data (Source: AAPL 2023 10-K | Section: PART I | Page: 9).\n\n\nThere is no specific date mentioned in the provided context for when these changes were implemented or will be implemented.\n\n\nThe Company's approach to customer privacy appears to be focused on protecting sensitive information, including personal information, through the use of encryption and other security measures.",
+        "keyword_overlap": 0.1148,
+        "numerical_accuracy": 1.0,
+        "latency_ms": 9449.14,
+        "num_sources": 4
+      },
+      "v2_agentic": {
+        "answer": "## Customer Privacy Approach\n\n\nThe Company describes its approach to customer privacy through its public statements, including its privacy policy, website information, press statements, and other notices provided to customers.\n\n\nAccording to the Company's 2022 10-K filing (Section: PART I | Page: 11), any failure to comply with these public statements or federal, state, or international privacy or data protection laws and regulations could result in inquiries or proceedings against the Company by governmental entities or others.\n\n\nThe Company devotes significant resources to network and data security, including through the use of encryption and other security measures intended to protect its systems and data (Source: AAPL 2022 10-K | Section: PART I | Page: 10).\n\n\nThere is no specific date mentioned in the provided context for when the Company's approach to customer privacy was implemented or changed.\n\n\nThe Company provides certain information for investors on its corporate website, including press releases and other information about financial performance (Source: AAPL 2022 10-K | Section: PART I | Page: 7).\n\n\nThere is no specific number mentioned in the provided context regarding the Company's approach to customer privacy.\n\n\nFor more information on the Company's approach to customer privacy, investors can refer to the Company's SEC filings and visit the Company's investor relations website at investor.apple.com (Source: AAPL 2022 10-K | Section: PART I | Page: 7).\n\n\n- - \n| Company | Description of Approach | Relevant Resources |\n|---------|---------------------------|--------------------|\n| AAPL    | Public statements, privacy policy, website information, press statements, and other notices provided to customers | investor.apple.com |\n|         | Devotes significant resources to network and data security | AAPL 2022 10-K | Page: 10 |\n|         | Uses encryption and other security measures to protect systems and data | AAPL 2022 10-K | Section: PART I | Page: 11 |",
+        "keyword_overlap": 0.1151,
+        "numerical_accuracy": 1.0,
+        "latency_ms": 19971.38,
+        "num_sources": 5,
+        "agents_used": [
+          "narrative"
+        ],
+        "verification": "grounded",
+        "confidence": 1.0,
+        "routing_correct": true
+      }
+    },
+    {
+      "question_id": 18,
+      "question": "What does Microsoft say about competition in cloud services?",
+      "question_type": "qualitative",
+      "difficulty": "medium",
+      "reference_answer": "Microsoft describes the cloud market as intensely competitive, naming competitors in infrastructure and platform services, and states that competition is based on price, performance, security and the breadth of services offered.",
+      "v1_rag": {
+        "answer": "## Competition in Cloud Services\n\n\nOur increasing focus on cloud-based services presents execution and competitive risks. A growing part of our business involves cloud-based services available across the spectrum of computing devices.\n\n\n### Competitive Landscape for Cloud-Based Services\n\n\nAzure faces diverse competition from companies such as Amazon, Google, IBM, Oracle, VMware, and open source offerings.\n\n\n### Competitive Advantage in Azure\n\n\nAzure\u2019s competitive advantage includes enabling a hybrid cloud, allowing deployment of existing datacenters with our public cloud into a single, cohesive infrastructure, and the ability to run at a scale that meets the needs of businesses of all sizes and complexities.\n\n\n### Competition in Gaming Platform\n\n\nXbox and our cloud gaming services face competition from various online gaming ecosystems and game streaming services, including those operated by Amazon, Apple, Meta, and Tencent. We also compete with other providers of entertainment services such as video streaming platforms. Our gaming platform competes with console platforms from Nintendo and Sony, both of which have a large, established base of customers.\n\n\n### Conclusion\n\n\nThe competitive landscape for cloud-based services is dynamic and highly competitive. Microsoft's strategic vision is to compete and grow by building best-in-class platforms and productivity services that utilize ubiquitous computing and ambient intelligence to drive insights and productivity gains.",
+        "keyword_overlap": 0.2119,
+        "numerical_accuracy": 1.0,
+        "latency_ms": 11083.44,
+        "num_sources": 4
+      },
+      "v2_agentic": {
+        "answer": "## Competition in Cloud Services\n\n\nOur competitors are developing new software and devices, while also deploying competing cloud-based services for consumers and businesses. The devices and form factors customers prefer evolve rapidly, influencing how users access services in the cloud and, in some cases, the user\u2019s choice of which suite of cloud-based services to use\n\n- \"dynamic and highly competitive\" (Source: MSFT 2022 10-K | Section: PART II | Page: 29 | Type: text)\n- \"rapidly developing and deploying cloud-based services for consumers and business customers\" (Source: MSFT 2023 10-K | Section: PART I | Page: 17 | Type: text)\n\n\nXbox and our cloud gaming services face competition from various online gaming ecosystems and game streaming services, including those operated by Amazon, Apple, Meta, Google, and Tencent. We also compete with other providers of entertainment services such as video streaming platforms\n\n- \"various online gaming ecosystems and game streaming services\" (Source: MSFT 2022 10-K | Section: PART I | Page: 14 | Type: text)\n- \"console platforms from Nintendo and Sony, both of which have a large, established base of customers\" (Source: MSFT 2023 10-K | Section: PART I | Page: 12 | Type: text)\n\n\nThere is no specific information on the number of competitors or market share in cloud services.",
+        "keyword_overlap": 0.2059,
+        "numerical_accuracy": 1.0,
+        "latency_ms": 16641.38,
+        "num_sources": 5,
+        "agents_used": [
+          "narrative"
+        ],
+        "verification": "grounded",
+        "confidence": 1.0,
+        "routing_correct": true
+      }
+    }
+  ]
+}
