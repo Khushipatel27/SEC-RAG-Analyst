@@ -508,7 +508,7 @@ sec-rag-analyst/
 │   ├── test_parser.py
 │   ├── test_retrieval.py
 │   ├── test_generation.py
-│   └── test_agents.py           # 44 tests — routing, arithmetic, grounding
+│   └── test_agents.py           # 45 tests — routing, arithmetic, grounding
 ├── Dockerfile
 ├── docker-compose.yml
 ├── .env.example
@@ -526,7 +526,7 @@ conda activate rag_finance
 
 # 1. Unit tests — offline, no LLM, no network, ~20 s
 pytest tests/ -q                  # 57 tests
-pytest tests/test_agents.py -q    # the v2 layer only
+pytest tests/test_agents.py -q    # the v2 layer only (45 tests)
 
 # 2. Smoke test — exercises the real dependencies and says which one is broken
 python scripts/smoke_test_agents.py           # 20 checks, no Ollama needed
