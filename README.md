@@ -1,6 +1,6 @@
 <div align="center">
 
-# 📊 SEC Financial RAG Analyst
+# 📊 Fingraph
 
 ### Ask plain-English questions about Apple, Microsoft, Google, Amazon & NVIDIA's annual filings — and get cited, grounded answers in real time.
 
@@ -190,36 +190,57 @@ number should ever have appeared.
 
 ## 🏗️ Architecture
 
+Retrieval is built on a single interface. `Retriever` declares one method —
+`retrieve(query, k, filters) -> list[Document]` — and every strategy implements
+it, including the one that composes the others.
+
+```mermaid
+flowchart TB
+    Q["Question"] --> API["FastAPI :8000<br/>/ask · /ask/agentic · /ask/stream"]
+    API --> ROUTE["query_router<br/>ticker · year · table vs prose"]
+    ROUTE --> HR
+
+    subgraph IFACE["Retriever (ABC) · retrieve(query, k, filters)"]
+        direction TB
+        HR["<b>HybridRetriever</b><br/>composes both, fuses, reranks"]
+        VR["<b>VectorRetriever</b><br/>dense · ChromaDB"]
+        BR["<b>BM25Retriever</b><br/>sparse · rank-bm25"]
+        HR --> VR
+        HR --> BR
+    end
+
+    VR --> RRF["RRF fusion&nbsp;&nbsp;score = Σ 1/(rank + 60)"]
+    BR --> RRF
+    RRF -->|"top 10 candidates"| RR["CrossEncoderReranker<br/>ms-marco-MiniLM-L-6-v2"]
+    RR -->|"top 5 passages"| LLM["llama3.2 via Ollama<br/>cited answer, SSE streamed"]
+    LLM --> API
+
+    style IFACE fill:#0d1117,stroke:#58a6ff,color:#c9d1d9
+    style HR fill:#1f6feb,color:#ffffff
+    style RRF fill:#238636,color:#ffffff
+    style RR fill:#238636,color:#ffffff
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Streamlit Dashboard                       │
-│  Setup │ Ask the Filings │ Agentic (v2) │ Profiles │ Eval   │
-└──────────────────────────┬──────────────────────────────────┘
-                           │ HTTP / SSE streaming
-┌──────────────────────────▼──────────────────────────────────┐
-│                  FastAPI Backend  :8000                      │
-│  POST /ask (v1) │ POST /ask/agentic (v2) │ GET /status      │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-┌──────────────────────────▼──────────────────────────────────┐
-│                    SECRAGPipeline                            │
-│                                                             │
-│  ┌──────────────┐  ┌─────────────────┐  ┌───────────────┐  │
-│  │  Ingestion   │  │  Hybrid Search  │  │  Generation   │  │
-│  │              │  │                 │  │               │  │
-│  │ pdfplumber   │  │ ChromaDB vector │  │ Prompt Router │  │
-│  │ BeautifulSoup│  │       +         │  │ llama3.2      │  │
-│  │ 512-token    │  │ BM25Okapi sparse│  │ SSE streaming │  │
-│  │ chunks       │  │       ↓         │  │               │  │
-│  │ 64 overlap   │  │  RRF Fusion     │  │ Cross-Encoder │  │
-│  └──────────────┘  │       ↓         │  │ Reranker      │  │
-│                    │  Rerank top-5   │  └───────────────┘  │
-│                    └─────────────────┘                      │
-└─────────────────────────────────────────────────────────────┘
-          │                              │
-  ChromaDB (vectors)              BM25 index (.pkl)
-  nomic-embed-text                rank-bm25
-```
+
+The two-stage width is deliberate: fusion collects **10** candidates because RRF
+only rewards documents *both* strategies rank highly, and that signal needs
+depth; the cross-encoder then narrows to the **5** passages the LLM actually
+sees.
+
+### Why interface-driven
+
+The v1 pipeline hard-wired its retrieval: `HybridSearcher` type-hinted
+`ChromaVectorStore`, `BM25Store` and `OllamaEmbedder` by name, so every strategy
+change meant editing that class, and the only way to test ranking was to stand
+up a real vector database. Depending on `Retriever` instead of on concrete
+backends changes what the system can absorb without being rewritten. v2's
+agentic layer is the case that proves it — the narrative agent is a *wrapper*
+around the existing pipeline, and adding a specialist meant composing a new
+object rather than adding branches to a search method. The same seam makes the
+strategies independently measurable (the evaluator compares vector-only,
+BM25-only, hybrid and hybrid+rerank through one uniform call), lets the whole
+retrieval stack be unit-tested offline against in-memory doubles, and means
+swapping ChromaDB for pgvector or the cross-encoder for a larger model is a
+constructor change rather than a refactor.
 
 ---
 
@@ -488,10 +509,14 @@ sec-rag-analyst/
 │   │   ├── chunker.py           # Smart chunker — preserves table blocks
 │   │   └── graph_builder.py     # Deterministic entity/relationship extraction
 │   ├── retrieval/
+│   │   ├── base.py              # Retriever ABC, Document, Reranker protocol
+│   │   ├── vector_retriever.py  # Dense retrieval
+│   │   ├── bm25_retriever.py    # Sparse retrieval
+│   │   ├── hybrid_retriever.py  # Composes both — RRF fusion + rerank
+│   │   ├── query_router.py      # Ticker/year/table routing from the question
 │   │   ├── embedder.py          # Ollama embedding client with retry logic
 │   │   ├── vector_store.py      # ChromaDB wrapper — filtered search
-│   │   ├── bm25_store.py        # BM25 store — build, search, persist
-│   │   └── hybrid_search.py     # RRF fusion + financial query routing
+│   │   └── bm25_store.py        # BM25 store — build, search, persist
 │   ├── generation/
 │   │   ├── chain.py             # RAG chain — prompt routing + streaming
 │   │   ├── prompts.py           # 4 prompt templates
@@ -505,8 +530,12 @@ sec-rag-analyst/
 │   ├── run_v1_v2_comparison.py  # Runs both systems, writes the comparison
 │   └── smoke_test_agents.py     # Checks each specialist against real deps
 ├── tests/
+│   ├── conftest.py              # 32-doc fixture corpus + offline test doubles
 │   ├── test_parser.py
 │   ├── test_retrieval.py
+│   ├── test_retrievers.py       # The Retriever interface + all 3 strategies
+│   ├── test_retrieval_accuracy.py # Recall@5 / Recall@1 regression floors
+│   ├── test_api.py              # Every route — happy path and failure path
 │   ├── test_generation.py
 │   └── test_agents.py           # 45 tests — routing, arithmetic, grounding
 ├── Dockerfile
@@ -519,14 +548,46 @@ sec-rag-analyst/
 
 ## 🧪 Testing
 
+**152 tests, ~8 s, fully offline** — no LLM, no network, no model downloads.
+Coverage is **51%** across `src/` and `api/`, concentrated where the logic is:
+
+| Area | Coverage |
+|:---|---:|
+| Retrieval interface + strategies (`base`, `vector_retriever`, `bm25_retriever`, `hybrid_retriever`, `query_router`) | **97%** |
+| FastAPI routes (`api/main.py`) | **91%** |
+| Chunker | 92% |
+| Verification / calculation agents | 79% / 78% |
+| Overall (`src/` + `api/`) | **51%** |
+
+The uncovered remainder is code that cannot run without live ChromaDB, Ollama or
+torch — `vector_store`, `embedder`, `reranker`, and the pipeline's ingest path.
+That surface is exercised by the smoke test below rather than by unit tests,
+which is a deliberate split: unit tests stay fast and hermetic, and anything
+needing a real dependency gets a test that names which dependency broke.
+
+> **On the accuracy tests.** `test_retrieval_accuracy.py` scores Recall@5 and
+> Recall@1 over a 32-document fixture corpus with hand-labelled answers, using a
+> bag-of-words embedder rather than the production model. It is a *regression
+> guard on the retrieval pipeline* — fusion, staging, reranking — and its numbers
+> are not comparable to the filing-level figures under
+> [Evaluation Results](#-evaluation-results). Recall@5 saturates at 1.0 there, so
+> Recall@1 carries the comparative assertions (BM25 0.350 · vector 0.750 ·
+> hybrid + rerank 0.850).
+
 Four levels, fastest first. Each isolates a different failure.
 
 ```bash
 conda activate rag_finance
 
-# 1. Unit tests — offline, no LLM, no network, ~20 s
-pytest tests/ -q                  # 57 tests
-pytest tests/test_agents.py -q    # the v2 layer only (45 tests)
+# 1. Unit tests — offline, no LLM, no network, ~8 s
+pytest tests/ -q                            # 152 tests
+pytest tests/test_retrievers.py -q          # the Retriever interface (30 tests)
+pytest tests/test_api.py -q                 # every endpoint (39 tests)
+pytest tests/test_retrieval_accuracy.py -q  # Recall@5 / Recall@1 floors (26 tests)
+pytest tests/test_agents.py -q              # the v2 layer only (45 tests)
+
+# Coverage report
+pytest --cov=src --cov=api --cov-report=term-missing
 
 # 2. Smoke test — exercises the real dependencies and says which one is broken
 python scripts/smoke_test_agents.py           # 20 checks, no Ollama needed
