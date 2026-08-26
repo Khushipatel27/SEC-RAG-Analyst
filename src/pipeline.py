@@ -17,9 +17,12 @@ from src.generation.chain import FinancialRAGChain
 from src.generation.reranker import CrossEncoderReranker
 from src.ingestion.chunker import FinancialChunker
 from src.ingestion.parser import FinancialDocumentParser
+from src.retrieval.bm25_retriever import BM25Retriever
 from src.retrieval.bm25_store import BM25Store
 from src.retrieval.embedder import OllamaEmbedder
-from src.retrieval.hybrid_search import HybridSearcher
+from src.retrieval.hybrid_retriever import HybridRetriever
+from src.retrieval.query_router import apply_financial_query_routing
+from src.retrieval.vector_retriever import VectorRetriever
 from src.retrieval.vector_store import ChromaVectorStore
 
 
@@ -45,10 +48,17 @@ class SECRAGPipeline:
         if not loaded:
             logger.info("No existing BM25 index found; it will be built on first ingest.")
 
-        self.hybrid_searcher = HybridSearcher(
+        # Retrieval is assembled from the interface up: two single-strategy
+        # retrievers, composed into a hybrid that fuses and reranks them.
+        self.vector_retriever = VectorRetriever(
             vector_store=self.vector_store,
-            bm25_store=self.bm25_store,
             embedder=self.embedder,
+        )
+        self.bm25_retriever = BM25Retriever(bm25_store=self.bm25_store)
+        self.retriever = HybridRetriever(
+            vector_retriever=self.vector_retriever,
+            bm25_retriever=self.bm25_retriever,
+            reranker=self.reranker,
         )
 
         # In-memory cache of ingested document metadata
@@ -242,7 +252,7 @@ class SECRAGPipeline:
         logger.info(f"Pipeline.ask: '{question[:80]}'")
 
         # --- Step 1: Query routing ---
-        auto_filters = self.hybrid_searcher.apply_financial_query_routing(question)
+        auto_filters = apply_financial_query_routing(question)
 
         # Explicit filters take precedence over auto-detected ones
         filters: dict = {}
@@ -261,27 +271,20 @@ class SECRAGPipeline:
 
         effective_filters = filters if filters else None
 
-        # --- Step 2: Hybrid search ---
-        retrieved_chunks = self.hybrid_searcher.search(
+        # --- Steps 2 & 3: Hybrid search (RRF fusion) + cross-encoder rerank ---
+        reranked_chunks, trace = self.retriever.retrieve_with_trace(
             query=question,
-            k_final=settings.top_k_vector,
+            k=settings.top_k_rerank,
             filters=effective_filters,
         )
 
-        if not retrieved_chunks:
+        if not reranked_chunks:
             logger.warning("No chunks retrieved; generating with empty context")
-
-        # --- Step 3: Rerank ---
-        reranked_chunks = self.reranker.rerank(
-            query=question,
-            chunks=retrieved_chunks,
-            top_k=settings.top_k_rerank,
-        )
 
         # --- Step 4: Generate ---
         response = self.chain.generate(question, reranked_chunks)
         response["filters_applied"] = effective_filters
-        response["retrieved_before_rerank"] = len(retrieved_chunks)
+        response["retrieved_before_rerank"] = trace["num_fused"]
 
         return response
 
@@ -295,7 +298,7 @@ class SECRAGPipeline:
         Streaming version of ask(). Yields tokens as they arrive.
         """
         # Routing and retrieval (same as ask())
-        auto_filters = self.hybrid_searcher.apply_financial_query_routing(question)
+        auto_filters = apply_financial_query_routing(question)
         filters: dict = {}
         if ticker_filter:
             filters["ticker"] = ticker_filter
@@ -309,15 +312,10 @@ class SECRAGPipeline:
 
         effective_filters = filters if filters else None
 
-        retrieved_chunks = self.hybrid_searcher.search(
+        reranked_chunks = self.retriever.retrieve(
             query=question,
-            k_final=settings.top_k_vector,
+            k=settings.top_k_rerank,
             filters=effective_filters,
-        )
-        reranked_chunks = self.reranker.rerank(
-            query=question,
-            chunks=retrieved_chunks,
-            top_k=settings.top_k_rerank,
         )
 
         yield from self.chain.generate_stream(question, reranked_chunks)

@@ -13,7 +13,9 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.ingestion.chunker import FinancialChunker
-from src.retrieval.hybrid_search import HybridSearcher, _RRF_K
+from src.retrieval.bm25_retriever import BM25Retriever
+from src.retrieval.hybrid_retriever import HybridRetriever, _RRF_K
+from src.retrieval.vector_retriever import VectorRetriever
 
 
 # ---------------------------------------------------------------------------
@@ -108,10 +110,17 @@ def mock_embedder():
 
 @pytest.fixture
 def hybrid_searcher(mock_vector_store, mock_bm25_store, mock_embedder):
-    return HybridSearcher(
-        vector_store=mock_vector_store,
-        bm25_store=mock_bm25_store,
-        embedder=mock_embedder,
+    """
+    A HybridRetriever with no reranker, so these tests observe RRF fusion
+    directly. Reranking is covered separately in test_retrievers.py.
+    """
+    return HybridRetriever(
+        vector_retriever=VectorRetriever(
+            vector_store=mock_vector_store,
+            embedder=mock_embedder,
+        ),
+        bm25_retriever=BM25Retriever(bm25_store=mock_bm25_store),
+        reranker=None,
     )
 
 
@@ -186,9 +195,9 @@ def test_chunker_respects_chunk_size(chunker):
 
 
 def test_hybrid_search_returns_k_results(hybrid_searcher):
-    """HybridSearcher.search should return exactly k_final unique results."""
+    """HybridRetriever.retrieve should return exactly k unique results."""
     k = 5
-    results = hybrid_searcher.search("What is Apple's revenue?", k_final=k)
+    results = hybrid_searcher.retrieve("What is Apple's revenue?", k=k)
 
     assert len(results) == k, f"Expected {k} results, got {len(results)}"
     assert all("text" in r for r in results), "All results should have 'text'"

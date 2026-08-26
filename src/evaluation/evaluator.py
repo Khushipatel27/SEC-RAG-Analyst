@@ -628,18 +628,18 @@ class RAGEvaluator:
             filters["year"] = str(year)
 
         if method == "vector_only":
-            embedding = pipeline.embedder.embed_text(query)
-            return pipeline.vector_store.search(embedding, k=10, filters=filters or None)
+            return pipeline.vector_retriever.retrieve(query, k=10, filters=filters or None)
 
         elif method == "bm25_only":
-            return pipeline.bm25_store.search(query, k=10)
+            return pipeline.bm25_retriever.retrieve(query, k=10)
 
         elif method == "hybrid":
-            return pipeline.hybrid_searcher.search(query, k_final=10, filters=filters or None)
+            # fuse() stops before reranking, which is what isolates RRF's
+            # contribution from the cross-encoder's in the comparison below.
+            return pipeline.retriever.fuse(query, k=10, filters=filters or None)
 
         elif method == "hybrid_rerank":
-            chunks = pipeline.hybrid_searcher.search(query, k_final=10, filters=filters or None)
-            return pipeline.reranker.rerank(query, chunks, top_k=5)
+            return pipeline.retriever.retrieve(query, k=5, filters=filters or None)
 
         else:
             raise ValueError(f"Unknown retrieval method: {method}")
