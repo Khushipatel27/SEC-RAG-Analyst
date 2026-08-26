@@ -26,12 +26,16 @@ data/bm25_index.pkl
 data/download.log
 data/download_log.json
 data/eval/eval_results.json
+data/xbrl_cache/
 
 # Keep the directory structure
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 !data/chroma_db/.gitkeep
 !data/eval/.gitkeep
+
+# The knowledge graph and the v1/v2 comparison ARE committed: the graph is small
+# (~1 MB) and rebuildable in 4s, and the comparison backs the README's numbers.
 
 # OS
 .DS_Store

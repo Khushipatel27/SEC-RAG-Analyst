@@ -37,6 +37,25 @@ python scripts/download_sec_docs.py
 ```
 Downloads 10 filings (AAPL, MSFT, GOOGL, AMZN, NVDA × 2022 & 2023) to `data/raw/`.
 
+### 5. Ingest and index the filings (one-time, ~15–30 min)
+```bash
+python scripts/fix_and_reingest.py
+```
+
+### 6. Build the knowledge graph for the v2 agents (one-time, ~4 sec)
+```bash
+python -m src.ingestion.graph_builder
+```
+Reads the ingested chunks and writes `data/graph/knowledge_graph.json`.
+No database needed — the graph agent queries this file directly.
+
+### 7. Set your SEC contact address
+The v2 XBRL agent calls SEC EDGAR, which requires a real contact address in the
+User-Agent header. Copy `.env.example` to `.env` and set:
+```
+SEC_USER_AGENT=Your Name your.email@example.com
+```
+
 ---
 
 ## EVERY TIME YOU USE THE APP
@@ -150,7 +169,41 @@ Measures how well the system actually works. **Requires all 10 documents ingeste
 
 ---
 
+### Tab — Agentic (v2)
+The multi-agent version. Same corpus, different architecture: a supervisor picks
+which specialist should answer, then a verification agent checks the result.
+
+**How to use:**
+1. Click one of the four example buttons — each exercises a different specialist:
+   - **💰 Exact figure** → XBRL agent (reads SEC structured data, not text)
+   - **🧮 Cross-company math** → XBRL + Calculation agents
+   - **🕸️ Relationship** → Graph agent (set operations across all 5 filings)
+   - **📖 Narrative** → falls back to the v1 pipeline
+2. Read the **Routing decision** panel — it shows what the supervisor detected
+   in your question and why it chose those agents.
+3. Read the **Verification detail** panel — it shows how many figures in the
+   answer were traced back to evidence.
+
+**What to look for in a demo:** ask the same question in Tab 2 (v1) and this tab
+(v2) and compare. Numeric questions are where they diverge most.
+
+**Reproduce the comparison table at the bottom of the tab:**
+```bash
+python scripts/build_agentic_eval.py
+python scripts/run_v1_v2_comparison.py
+```
+
+---
+
 ## TROUBLESHOOTING
+
+### "The agentic layer is not initialised" in the Agentic tab
+→ Build the knowledge graph: `python -m src.ingestion.graph_builder`, then
+restart the API.
+
+### v2 answers say "No matching XBRL facts"
+→ Check `SEC_USER_AGENT` is set in `.env` to a real name and email. SEC throttles
+requests without one.
 
 ### "API Offline" in header
 → Start Terminal 2: `uvicorn api.main:app --reload`

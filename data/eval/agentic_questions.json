@@ -1,0 +1,212 @@
+[
+  {
+    "question": "How much did revenue change for AAPL between FY2022 and FY2023?",
+    "reference_answer": "AAPL revenue went from $394.33B in FY2022 to $383.29B in FY2023, a change of -2.80%.",
+    "ticker": "AAPL",
+    "year": "2023",
+    "question_type": "multi_hop_numeric",
+    "difficulty": "medium",
+    "expected_agents": [
+      "xbrl",
+      "calculation"
+    ]
+  },
+  {
+    "question": "How much did R&D expense change for NVDA between FY2022 and FY2023?",
+    "reference_answer": "NVDA R&D expense went from $5.27B in FY2022 to $7.34B in FY2023, a change of +39.31%.",
+    "ticker": "NVDA",
+    "year": "2023",
+    "question_type": "multi_hop_numeric",
+    "difficulty": "medium",
+    "expected_agents": [
+      "xbrl",
+      "calculation"
+    ]
+  },
+  {
+    "question": "How much did net income change for GOOGL between FY2022 and FY2023?",
+    "reference_answer": "GOOGL net income went from $59.97B in FY2022 to $73.80B in FY2023, a change of +23.05%.",
+    "ticker": "GOOGL",
+    "year": "2023",
+    "question_type": "multi_hop_numeric",
+    "difficulty": "medium",
+    "expected_agents": [
+      "xbrl",
+      "calculation"
+    ]
+  },
+  {
+    "question": "How much did operating cash flow change for AMZN between FY2022 and FY2023?",
+    "reference_answer": "AMZN operating cash flow went from $46.75B in FY2022 to $84.95B in FY2023, a change of +81.69%.",
+    "ticker": "AMZN",
+    "year": "2023",
+    "question_type": "multi_hop_numeric",
+    "difficulty": "hard",
+    "expected_agents": [
+      "xbrl",
+      "calculation"
+    ]
+  },
+  {
+    "question": "How much did revenue change for MSFT between FY2022 and FY2023?",
+    "reference_answer": "MSFT revenue went from $198.27B in FY2022 to $211.91B in FY2023, a change of +6.88%.",
+    "ticker": "MSFT",
+    "year": "2023",
+    "question_type": "multi_hop_numeric",
+    "difficulty": "medium",
+    "expected_agents": [
+      "xbrl",
+      "calculation"
+    ]
+  },
+  {
+    "question": "What was NVDA's R&D spend as a percentage of revenue in FY2023?",
+    "reference_answer": "NVDA spent $7.34B on R&D spend against revenue of $26.97B in FY2023, or 27.21% of revenue.",
+    "ticker": "NVDA",
+    "year": "2023",
+    "question_type": "ratio",
+    "difficulty": "hard",
+    "expected_agents": [
+      "xbrl",
+      "calculation"
+    ]
+  },
+  {
+    "question": "What was AAPL's R&D spend as a percentage of revenue in FY2023?",
+    "reference_answer": "AAPL spent $29.91B on R&D spend against revenue of $383.29B in FY2023, or 7.80% of revenue.",
+    "ticker": "AAPL",
+    "year": "2023",
+    "question_type": "ratio",
+    "difficulty": "hard",
+    "expected_agents": [
+      "xbrl",
+      "calculation"
+    ]
+  },
+  {
+    "question": "What was MSFT's R&D spend as a percentage of revenue in FY2023?",
+    "reference_answer": "MSFT spent $27.20B on R&D spend against revenue of $211.91B in FY2023, or 12.83% of revenue.",
+    "ticker": "MSFT",
+    "year": "2023",
+    "question_type": "ratio",
+    "difficulty": "hard",
+    "expected_agents": [
+      "xbrl",
+      "calculation"
+    ]
+  },
+  {
+    "question": "What was GOOGL's net income as a percentage of revenue in FY2023?",
+    "reference_answer": "GOOGL spent $73.80B on net income against revenue of $307.39B in FY2023, or 24.01% of revenue.",
+    "ticker": "GOOGL",
+    "year": "2023",
+    "question_type": "ratio",
+    "difficulty": "medium",
+    "expected_agents": [
+      "xbrl",
+      "calculation"
+    ]
+  },
+  {
+    "question": "How much faster did NVDA's R&D spend grow than MSFT's between FY2022 and FY2023?",
+    "reference_answer": "NVDA R&D spend grew +39.31% (from $5.27B to $7.34B) while MSFT grew +10.95% (from $24.51B to $27.20B). NVDA grew faster by 28.37 percentage points.",
+    "ticker": null,
+    "year": "2023",
+    "question_type": "cross_company",
+    "difficulty": "hard",
+    "expected_agents": [
+      "xbrl",
+      "calculation"
+    ]
+  },
+  {
+    "question": "How much faster did GOOGL's revenue grow than AAPL's between FY2022 and FY2023?",
+    "reference_answer": "GOOGL revenue grew +8.68% (from $282.84B to $307.39B) while AAPL grew -2.80% (from $394.33B to $383.29B). GOOGL grew faster by 11.48 percentage points.",
+    "ticker": null,
+    "year": "2023",
+    "question_type": "cross_company",
+    "difficulty": "hard",
+    "expected_agents": [
+      "xbrl",
+      "calculation"
+    ]
+  },
+  {
+    "question": "How much faster did AMZN's net income grow than AAPL's between FY2022 and FY2023?",
+    "reference_answer": "AMZN net income grew +1217.74% (from -$2.72B to $30.43B) while AAPL grew -2.81% (from $99.80B to $97.00B). AMZN grew faster by 1220.56 percentage points.",
+    "ticker": null,
+    "year": "2023",
+    "question_type": "cross_company",
+    "difficulty": "hard",
+    "expected_agents": [
+      "xbrl",
+      "calculation"
+    ]
+  },
+  {
+    "question": "Which companies share supply chain risk exposure?",
+    "reference_answer": "All five companies in the corpus (Apple, Microsoft, Alphabet, Amazon and NVIDIA) disclose supply chain risk in their 10-K filings. NVIDIA and Apple devote the most filing text to it.",
+    "ticker": null,
+    "year": "2023",
+    "question_type": "relationship",
+    "difficulty": "hard",
+    "expected_agents": [
+      "graph"
+    ]
+  },
+  {
+    "question": "What risk themes do NVIDIA and Microsoft both disclose?",
+    "reference_answer": "NVIDIA and Microsoft both disclose supply chain, privacy regulation, tax, litigation, foreign exchange, cybersecurity, macroeconomic, intellectual property, geopolitical, artificial intelligence, pandemic and climate risk. Customer concentration, semiconductor supply and data centre capacity are disclosed by NVIDIA only.",
+    "ticker": null,
+    "year": "2023",
+    "question_type": "relationship",
+    "difficulty": "hard",
+    "expected_agents": [
+      "graph"
+    ]
+  },
+  {
+    "question": "Which risks does NVIDIA disclose that the other companies do not?",
+    "reference_answer": "NVIDIA uniquely discloses customer concentration risk and semiconductor supply risk relative to the other filers in the corpus, reflecting its fabless manufacturing model and reliance on a small number of large customers.",
+    "ticker": "NVDA",
+    "year": "2023",
+    "question_type": "relationship",
+    "difficulty": "hard",
+    "expected_agents": [
+      "graph"
+    ]
+  },
+  {
+    "question": "Which geographies does Apple name as exposure in its filings?",
+    "reference_answer": "Apple names China, Taiwan, Japan, India, Korea, Singapore, Vietnam, Europe, Ireland and Australia in its 10-K filings.",
+    "ticker": "AAPL",
+    "year": "2023",
+    "question_type": "relationship",
+    "difficulty": "medium",
+    "expected_agents": [
+      "graph"
+    ]
+  },
+  {
+    "question": "How does Apple describe its approach to customer privacy?",
+    "reference_answer": "Apple describes privacy as a fundamental human right and states that it designs its products to minimise data collection, keeping data on device where possible, and notes that privacy regulation such as GDPR creates compliance obligations and risk.",
+    "ticker": "AAPL",
+    "year": "2023",
+    "question_type": "qualitative",
+    "difficulty": "medium",
+    "expected_agents": [
+      "narrative"
+    ]
+  },
+  {
+    "question": "What does Microsoft say about competition in cloud services?",
+    "reference_answer": "Microsoft describes the cloud market as intensely competitive, naming competitors in infrastructure and platform services, and states that competition is based on price, performance, security and the breadth of services offered.",
+    "ticker": "MSFT",
+    "year": "2023",
+    "question_type": "qualitative",
+    "difficulty": "medium",
+    "expected_agents": [
+      "narrative"
+    ]
+  }
+]

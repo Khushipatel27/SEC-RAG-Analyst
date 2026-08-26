@@ -29,6 +29,34 @@ class Settings(BaseSettings):
     max_new_tokens: int = 1024
     temperature: float = 0.0
 
+    # ------------------------------------------------------------------
+    # v2 — agentic layer
+    # ------------------------------------------------------------------
+
+    # SEC requires a descriptive User-Agent with a real contact address on
+    # every EDGAR request. Requests without one get throttled or blocked.
+    sec_user_agent: str = "SEC RAG Analyst khuship.study@gmail.com"
+
+    # Companies the agentic layer knows about
+    agent_tickers: list[str] = ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA"]
+
+    # XBRL facts are cached on disk so repeated questions don't re-hit EDGAR
+    xbrl_cache_dir: Path = Path("data/xbrl_cache")
+    xbrl_cache_ttl_hours: int = 168  # 1 week; 10-K facts change rarely
+
+    # Knowledge graph built from already-ingested chunks
+    graph_path: Path = Path("data/graph/knowledge_graph.json")
+
+    # Optional Neo4j export (the graph agent works without it)
+    neo4j_enabled: bool = False
+    neo4j_uri: str = "bolt://localhost:7687"
+    neo4j_user: str = "neo4j"
+    neo4j_password: str = "yourpassword"
+
+    # Verification
+    verification_enabled: bool = True
+    verification_max_evidence_chars: int = 6000
+
     class Config:
         env_file = ".env"
 

@@ -5,18 +5,18 @@
     "num_questions": 22
   },
   "bm25_only": {
-    "avg_mrr": 0.1997,
+    "avg_mrr": 0.2379,
     "avg_precision_at_k": 0.0955,
     "num_questions": 22
   },
   "hybrid": {
-    "avg_mrr": 0.3689,
-    "avg_precision_at_k": 0.4389,
+    "avg_mrr": 0.3727,
+    "avg_precision_at_k": 0.4434,
     "num_questions": 22
   },
   "hybrid_rerank": {
     "avg_mrr": 0.5947,
-    "avg_precision_at_k": 0.5455,
+    "avg_precision_at_k": 0.5545,
     "num_questions": 22
   }
 }

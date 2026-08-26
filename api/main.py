@@ -15,6 +15,7 @@ from loguru import logger
 from pydantic import BaseModel
 from sse_starlette.sse import EventSourceResponse
 
+from src.config import settings
 from src.pipeline import SECRAGPipeline
 
 # ---------------------------------------------------------------------------
@@ -22,8 +23,14 @@ from src.pipeline import SECRAGPipeline
 # ---------------------------------------------------------------------------
 app = FastAPI(
     title="SEC Financial RAG API",
-    description="Production-grade RAG system for SEC 10-K filings analysis",
-    version="1.0.0",
+    description=(
+        "RAG system for SEC 10-K filings analysis.\n\n"
+        "**/ask** — v1: hybrid retrieval → rerank → generate.\n\n"
+        "**/ask/agentic** — v2: a supervisor routes the question to XBRL, "
+        "calculation, graph, and retrieval specialists, then verifies the "
+        "answer is grounded before returning it."
+    ),
+    version="2.0.0",
 )
 
 # CORS for Streamlit frontend
@@ -73,11 +80,12 @@ async def global_exception_handler(request: Request, exc: Exception):
 # Pipeline singleton (initialised at startup)
 # ---------------------------------------------------------------------------
 pipeline: Optional[SECRAGPipeline] = None
+supervisor: Optional["SupervisorAgent"] = None
 
 
 @app.on_event("startup")
 async def startup_event():
-    global pipeline
+    global pipeline, supervisor
     logger.info("Starting up SEC RAG API – initialising pipeline...")
     try:
         pipeline = SECRAGPipeline()
@@ -85,6 +93,16 @@ async def startup_event():
     except Exception as exc:
         logger.error(f"Pipeline initialisation failed: {exc}")
         pipeline = None
+
+    # The agentic layer is additive: if it fails to start, /ask still works.
+    try:
+        from src.agents.supervisor import SupervisorAgent
+
+        supervisor = SupervisorAgent(pipeline=pipeline)
+        logger.success("Agentic supervisor initialised successfully")
+    except Exception as exc:
+        logger.error(f"Supervisor initialisation failed: {exc}")
+        supervisor = None
 
 
 # ---------------------------------------------------------------------------
@@ -127,6 +145,25 @@ class AskResponse(BaseModel):
     retrieved_before_rerank: Optional[int] = None
 
 
+class AgenticAskRequest(BaseModel):
+    question: str
+    ticker_filter: Optional[str] = None
+    year_filter: Optional[str] = None
+    include_agent_results: bool = False
+
+
+class AgenticAskResponse(BaseModel):
+    answer: str
+    sources: list[dict]
+    agents_used: list[str]
+    routing: dict
+    verification: dict
+    trace: list[dict]
+    latency_ms: float
+    model: str
+    agent_results: Optional[dict] = None
+
+
 # ---------------------------------------------------------------------------
 # Helper
 # ---------------------------------------------------------------------------
@@ -136,6 +173,19 @@ def _require_pipeline() -> SECRAGPipeline:
     if pipeline is None:
         raise HTTPException(status_code=503, detail="Pipeline not initialised")
     return pipeline
+
+
+def _require_supervisor():
+    if supervisor is None:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "Agentic supervisor not initialised. Check that edgartools and "
+                "langgraph are installed and that the knowledge graph has been "
+                "built (python -m src.ingestion.graph_builder)."
+            ),
+        )
+    return supervisor
 
 
 # ---------------------------------------------------------------------------
@@ -215,6 +265,63 @@ async def ask(request: AskRequest):
         raise HTTPException(status_code=500, detail=str(exc))
 
     return AskResponse(**result)
+
+
+@app.post("/ask/agentic", response_model=AgenticAskResponse, tags=["QA"])
+async def ask_agentic(request: AgenticAskRequest):
+    """
+    Answer a question through the v2 multi-agent pipeline.
+
+    A supervisor inspects the question and dispatches to the specialists it
+    needs — exact XBRL figures, in-code calculations, knowledge-graph traversal,
+    and the v1 retrieval pipeline — then verifies the drafted answer is grounded
+    in the evidence before returning it.
+
+    The response reports which agents ran and why, so the routing decision is
+    inspectable rather than implicit.
+    """
+    s = _require_supervisor()
+
+    try:
+        result = s.ask(
+            question=request.question,
+            ticker_filter=request.ticker_filter,
+            year_filter=request.year_filter,
+        )
+    except Exception as exc:
+        logger.error(f"Agentic ask failed: {exc}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(exc))
+
+    if not request.include_agent_results:
+        # Full specialist payloads are verbose; opt in when debugging routing.
+        result = {**result, "agent_results": None}
+
+    return AgenticAskResponse(**result)
+
+
+@app.get("/agents/status", tags=["System"])
+async def agents_status():
+    """Report which specialists are available and what the graph contains."""
+    if supervisor is None:
+        return {"available": False, "reason": "Supervisor not initialised"}
+
+    return {
+        "available": True,
+        "agents": {
+            "xbrl": {
+                "available": True,
+                "supported_metrics": supervisor.xbrl.supported_metrics(),
+                "tickers": settings.agent_tickers,
+            },
+            "calculation": {"available": True},
+            "graph": {
+                "available": supervisor.graph.is_available,
+                "stats": supervisor.graph.stats,
+            },
+            "narrative": {"available": supervisor.narrative is not None},
+            "verification": {"enabled": settings.verification_enabled},
+        },
+    }
 
 
 @app.get("/ask/stream", tags=["QA"])

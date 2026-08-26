@@ -23,6 +23,40 @@ SECTION_PATTERNS = [
 _SECTION_RE = re.compile("|".join(SECTION_PATTERNS), re.MULTILINE)
 
 # ---------------------------------------------------------------------------
+# Brand / product names that must survive spacing repair
+# ---------------------------------------------------------------------------
+# These are camel-cased by design. The generic camelCase-splitting rule in
+# _fix_spacing() would otherwise rewrite them ("iPhone" → "i Phone"), which
+# breaks exact keyword retrieval for the product terms users ask about most.
+PROTECTED_TERMS: list[str] = [
+    # Apple
+    "iPhone", "iPad", "iPod", "iMac", "iOS", "iPadOS", "macOS", "watchOS",
+    "tvOS", "iCloud", "iTunes", "iMessage", "MacBook", "AirPods", "AirTag",
+    "FaceTime", "HomePod", "AppleCare", "CarPlay", "ResearchKit",
+    # Microsoft
+    "PowerPoint", "SharePoint", "OneDrive", "OneNote", "GitHub Copilot", "GitHub",
+    "LinkedIn", "DirectX", "PowerShell", "VisualStudio", "PowerBI", "SQLServer",
+    "OpenAI", "ChatGPT",
+    # Alphabet
+    "YouTube", "AdSense", "AdWords", "AdMob", "BigQuery", "DeepMind",
+    "reCAPTCHA", "ChromeOS", "PageRank", "Fitbit", "Waymo", "DoubleClick",
+    # Amazon
+    "AmazonBasics", "CloudFront", "DynamoDB", "Goodreads", "IMDb",
+    "PrimeVideo", "SageMaker",
+    # NVIDIA
+    "GeForceNOW", "GeForce", "cuDNN", "TensorRT", "NVLink", "NVSwitch",
+    "Omniverse", "BlueField", "GauGAN", "vGPU", "Jetson",
+    # Cross-industry
+    "eBay", "PayPal", "WhatsApp", "WeChat", "TikTok", "JavaScript", "TypeScript",
+    "AirBnB", "SpaceX", "FedEx", "DoorDash",
+]
+
+# Longest first so "GeForceNOW" is matched before "GeForce".
+_PROTECTED_TERMS_RE = re.compile(
+    "|".join(re.escape(t) for t in sorted(PROTECTED_TERMS, key=len, reverse=True))
+)
+
+# ---------------------------------------------------------------------------
 # Metric extraction patterns  {label: [pattern, ...]}
 # ---------------------------------------------------------------------------
 _METRIC_PATTERNS: dict[str, list[str]] = {
@@ -58,6 +92,7 @@ def _fix_spacing(text: str) -> str:
     Repair spacing defects produced by naive HTML strippers.
 
     Applies rules in order:
+    0. Mask brand/product names so later rules cannot corrupt them
     1. wordninja — split long all-lowercase merged tokens
        e.g. "isamultinational" → "is a multinational"
     2. camelCase boundary — "appleInc" → "apple Inc"
@@ -65,7 +100,23 @@ def _fix_spacing(text: str) -> str:
     4. Space after closing parenthesis before a letter
     5. Strip long separator lines
     6. Collapse whitespace
+    7. Restore the masked brand names
     """
+    # ── 0. Protect brand names from the camelCase rule ───────────────────────
+    # Rule 2 exists to repair "appleInc" → "apple Inc", but it cannot tell that
+    # apart from a legitimately camel-cased product name. Left unguarded it
+    # rewrites iPhone → "i Phone" and YouTube → "You Tube", which silently
+    # destroys the exact tokens BM25 depends on for keyword matching.
+    masked: dict[str, str] = {}
+
+    def _mask(m: "re.Match") -> str:
+        token = m.group(0)
+        placeholder = f"\x00{len(masked)}\x00"
+        masked[placeholder] = token
+        return placeholder
+
+    text = _PROTECTED_TERMS_RE.sub(_mask, text)
+
     # ── 1. wordninja: split merged all-lowercase tokens ──────────────────────
     try:
         import wordninja as _wn
@@ -94,6 +145,10 @@ def _fix_spacing(text: str) -> str:
     # ── 6. Collapse whitespace ────────────────────────────────────────────────
     text = re.sub(r"[ \t]{2,}", " ", text)
     text = re.sub(r"\n{3,}", "\n\n", text)
+
+    # ── 7. Restore protected brand names ─────────────────────────────────────
+    for placeholder, original in masked.items():
+        text = text.replace(placeholder, original)
 
     return text.strip()
 
